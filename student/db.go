@@ -22,8 +22,8 @@ func CreateTableIfNotExists(db *gorm.DB) (err error) {
 	return
 }
 
-func CreateStudent(db *gorm.DB) (err error) {
-	newStudent := Student{FirstName: "Pedro", LastName: "Oliveira", CursoID: 1, StartDate: time.Now()}
+func CreateStudent(db *gorm.DB, student Student) (err error) {
+	newStudent := student
 	return db.Save(&newStudent).Error
 }
 

@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"team-academy/student"
-	"time"
+	"team-academy/student_subject"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
@@ -16,7 +15,39 @@ func main() {
 	}
 	db.SingularTable(true)
 
-	err = student.CreateTableIfNotExists(db)
+	err = student_subject.CreateTableIfNotExists(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student_subject.AddStudentToSubject(db, 1, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student_subject.RemoveStudentFromSubject(db, 1, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	studentSubject, err := student_subject.GetSubjectsByStudentID(db, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(studentSubject)
+
+	studentSubject, err = student_subject.GetStudentsBySubjectID(db, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(studentSubject)
+
+	/*err = student.CreateTableIfNotExists(db)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -47,7 +78,7 @@ func main() {
 		return
 	}
 
-	fmt.Println(students)
+	fmt.Println(students)*/
 }
 
 /*func main() {
