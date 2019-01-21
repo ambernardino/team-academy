@@ -79,11 +79,11 @@ func main() {
 	fmt.Println(profs)
 }
 
-func createTableIfNotExist (db *gorm.DB) (error){
+func createTableIfNotExist (db *gorm.DB) (err error){
 	if !db.HasTable(Professor{}) {
 		return db.CreateTable(Professor{}).Error
 	}
-	return nil
+	return 
 }
 
 func createProfessors (db *gorm.DB) (err error){
