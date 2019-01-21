@@ -17,6 +17,7 @@ func main() {
 		return
 	}
 	db.SingularTable(true)
+
 	err = professor.CreateTableIfNotExist(db)
 	if err != nil {
 		fmt.Println(err)
@@ -44,7 +45,7 @@ func main() {
 	}
 	fmt.Println(profs)
 
-	//--------------------------------------------------------------------------------------------------------
+	/*-------------------------------------------------SUBJECT TESTS----------------------------------------------------*/
 	err = subject.CreateTableIfNotExist(db)
 	if err != nil {
 		fmt.Println(err)
