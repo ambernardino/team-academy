@@ -2,37 +2,12 @@ package main
 
 import (
 	"fmt"
+	"team-academy/student"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-type Student struct {
-	ID        int `gorm:"AUTO_INCREMENT"`
-	FirstName string
-	LastName  string
-	CursoID   int
-	StartDate time.Time
-}
-
-func CreateTableIfNotExists(db *gorm.DB) (err error) {
-	if !db.HasTable(Student{}) {
-		return db.CreateTable(Student{}).Error
-	}
-
-	return
-}
-
-func CreateStudent(db *gorm.DB) (err error) {
-	newStudent := Student{FirstName: "Pedro", LastName: "Oliveira", CursoID: 1, StartDate: time.Now()}
-	return db.Save(&newStudent).Error
-}
-
-func GetAllStudents(db *gorm.DB) (students []Student, err error) {
-	err = db.Find(&students).Error
-	return
-}
 
 func main() {
 	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
@@ -41,19 +16,33 @@ func main() {
 	}
 	db.SingularTable(true)
 
-	err = CreateTableIfNotExists(db)
+	err = student.CreateTableIfNotExists(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	err = CreateStudent(db)
+	err = student.CreateStudent(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	students, err := GetAllStudents(db)
+	s1 := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
+	err = student.UpdateStudent(db, s1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	s2 := student.Student{ID: 1}
+	err = student.DeleteStudent(db, s2)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	students, err := student.GetAllStudents(db)
 	if err != nil {
 		fmt.Println(err)
 		return
