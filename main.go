@@ -8,12 +8,31 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type Alunos struct {
+type Student struct {
 	ID        int `gorm:"AUTO_INCREMENT"`
 	FirstName string
 	LastName  string
 	DegreeID  int
 	StartDate time.Time
+}
+
+// Creates a new table if non is found
+func CreateTable(db *gorm.DB) (err error) {
+	if !db.HasTable(Student{}) {
+		err = db.CreateTable(Student{}).Error
+	}
+	return
+}
+
+func CreateStudent(db *gorm.DB) (err error) {
+	newStudent := Student{FirstName: "John", LastName: "Doe", DegreeID: 1, StartDate: time.Now()}
+	err = db.Save(&newStudent).Error
+	return
+}
+
+func GetStudents(db *gorm.DB) (students []Student, err error) {
+	err = db.Find(&students).Error
+	return
 }
 
 func main() {
@@ -24,29 +43,23 @@ func main() {
 	}
 
 	db.SingularTable(true)
-	if !db.HasTable(Alunos{}) {
-		err = db.CreateTable(Alunos{}).Error
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-	}
-
-	newAluno := Alunos{FirstName: "John", LastName: "Doe", DegreeID: 1, StartDate: time.Now()}
-	err = db.Save(&newAluno).Error
+	err = CreateTable(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	var alunos []Alunos
-	err = db.Find(&alunos).Error
+	err = CreateStudent(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
-	fmt.Println(alunos)
+	students, err := GetStudents(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(students)
 }
 
 /*func main() {
