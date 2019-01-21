@@ -1,45 +1,186 @@
 package main
 
 import (
-"database/sql"
-"fmt"
-"strconv"
+	"fmt"
+	"team-academy/professor"
+	"team-academy/student"
+	"team-academy/student_subject"
+	"team-academy/subject"
+	"time"
 
-_ "github.com/mattn/go-sqlite3"
+	"github.com/jinzhu/gorm"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	database, err := sql.Open("sqlite3", "./clip_holy_grail.db")
+	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	statement, err := database.Prepare("CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT)")
+	err = professor.CreateTableIfNotExists(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student.CreateTableIfNotExists(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = subject.CreateTableIfNotExists(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student_subject.CreateTableIfNotExists(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = professor.CreateProfessor(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	newStudent := student.Student{FirstName: "Pedro", LastName: "Oliveira", CursoID: 1, StartDate: time.Now()}
+	err = student.CreateStudent(db, newStudent)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	newSubject := subject.Subject{ID: 2, Name: "Eletrónica 1", Description: "Uma seca desgraçada"}
+	err = subject.CreateSubject(db, newSubject)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student_subject.AddStudentToSubject(db, 1, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	newProfessor := professor.Professor{ID: 10, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now()}
+	err = professor.UpdateProfessorInfo(db, newProfessor)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	s := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
+	err = student.UpdateStudent(db, s)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	updatedSubject := subject.Subject{ID: 2, Name: "Eletrónica 2", Description: "Outra seca desgraçada"}
+	err = subject.UpdateSubjectInfo(db, updatedSubject)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = professor.DeleteProfessor(db, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student.DeleteStudent(db, 3)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = subject.DeleteSubject(db, 8)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student_subject.RemoveStudentFromSubject(db, 1, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	professors, err := professor.GetAllProfessors(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(professors)
+
+	students, err := student.GetAllStudents(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(students)
+
+	subjects, err := subject.GetAllSubjects(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(subjects)
+
+	studentSubject, err := student_subject.GetSubjectsByStudentID(db, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(studentSubject)
+
+	studentSubject, err = student_subject.GetSubjectsByStudentID(db, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(studentSubject)
+}
+
+/*func main() {
+	/*database, err := sql.Open("sqlite3", "./clip_holy_grail.db")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	statement, err := database.Prepare("CREATE TABLE IF NOT EXISTS alunos (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, curso_id NUMBER, start_date DATE)")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	statement.Exec()
-	statement, err = database.Prepare("INSERT INTO people (firstname, lastname) VALUES (?, ?)")
+	statement, err = database.Prepare("INSERT INTO alunos (firstname, lastname, curso_id) VALUES (?, ?, ?)")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	statement.Exec("John", "Doe")
-	rows, err := database.Query("SELECT id, firstname, lastname FROM people")
+	statement.Exec("Pedro", "Oliveira", "50544")
+	rows, err := database.Query("SELECT id, firstname, lastname, curso_id FROM alunos")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	
-	var id int
+
+	var id, curso_id int
 	var firstname, lastname string
 	for rows.Next() {
-		rows.Scan(&id, &firstname, &lastname)
-		fmt.Println(strconv.Itoa(id) + ": " + firstname + " " + lastname)
+		rows.Scan(&id, &firstname, &lastname, &curso_id)
+		fmt.Println(strconv.Itoa(id) + ": " + firstname + " " + lastname + " " + strconv.Itoa(curso_id))
 	}
-}
-
+}*/
