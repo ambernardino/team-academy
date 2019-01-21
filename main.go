@@ -2,11 +2,47 @@ package main
 
 import (
 	"fmt"
+	"team-academy/professor"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+func main() {
+	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	db.SingularTable(true)
+	err = professor.CreateTableIfNotExist(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = professor.CreateProfessors(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	prof := professor.Professor{ID: 6, FirstName: "Sérgio", LastName: "Onofre", CursoIds: "MIEEC", CadeiraIds: "IT", StartDate: time.Now()}
+	err = professor.UpdateProfessor(db, prof)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = professor.RemoveProfessor(db, 8)
+	if err != nil {
+		return
+	}
+	profs, err := professor.GetAllProfessors(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(profs)
+}
 
 /*func main() {
 	database, err := sql.Open("sqlite3", "./clip_holy_grail.db")
@@ -44,56 +80,3 @@ import (
 		fmt.Println(strconv.Itoa(id) + ": " + firstname + " " + lastname + " " + cursoIds + " " + cadeiraIds)
 	}
 }*/
-
-type Professor struct {
-	ID         int `gorm:"AUTO_INCREMENT"`
-	FirstName  string
-	LastName   string
-	CursoIds   string
-	CadeiraIds string
-	StartDate  time.Time
-}
-
-func main() {
-	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	db.SingularTable(true)
-	err = createTableIfNotExist(db)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = createProfessors(db)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	profs, err := getAllProfessors(db)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(profs)
-}
-
-func createTableIfNotExist (db *gorm.DB) (err error){
-	if !db.HasTable(Professor{}) {
-		return db.CreateTable(Professor{}).Error
-	}
-	return 
-}
-
-func createProfessors (db *gorm.DB) (err error){
-	newProfessor := Professor{FirstName: "Paulo", LastName: "Montezuma", CursoIds: "MIEEC", CadeiraIds: "IT", StartDate: time.Now()}
-	err = db.Save(&newProfessor).Error
-	return 
-}
-
-func getAllProfessors (db *gorm.DB) (professors []Professor, err error){
-	err = db.Find(&professors).Error
-	return
-}
-
