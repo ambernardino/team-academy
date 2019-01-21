@@ -2,20 +2,12 @@ package main
 
 import (
 	"fmt"
+	"team-academy/professor"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-type Professor struct {
-	ID         int `gorm:"AUTO_INCREMENT"`
-	FirstName  string
-	LastName   string
-	CursoIDs   string
-	CadeiraIDS string
-	StartDate  time.Time
-}
 
 func main() {
 	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
@@ -24,43 +16,38 @@ func main() {
 		return
 	}
 
-	err = CreateTableIfNotExists(db)
+	err = professor.CreateTableIfNotExists(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	err = CreateProfessor(db)
+	err = professor.CreateProfessor(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	professors, err := GetAllProfessors(db)
+	newProfessor := professor.Professor{ID: 10, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now()}
+	err = professor.UpdateProfessorInfo(db, newProfessor)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = professor.DeleteProfessor(db, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	professors, err := professor.GetAllProfessors(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	fmt.Println(professors)
-}
-
-func CreateTableIfNotExists(db *gorm.DB) (err error) {
-	db.SingularTable(true)
-	if !db.HasTable(Professor{}) {
-		return db.CreateTable(Professor{}).Error
-	}
-	return
-}
-
-func CreateProfessor(db *gorm.DB) (err error) {
-	newProfessor := Professor{FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now()}
-	return db.Save(&newProfessor).Error
-}
-
-func GetAllProfessors(db *gorm.DB) (professors []Professor, err error) {
-	err = db.Find(&professors).Error
-	return
 }
 
 /*func main() {
