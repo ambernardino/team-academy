@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"team-academy/professor"
+	"team-academy/student"
+	"team-academy/student_subject"
 	"team-academy/subject"
 	"time"
 
@@ -18,11 +20,68 @@ func main() {
 	}
 	db.SingularTable(true)
 
-	err = professor.CreateTableIfNotExist(db)
+	err = student.CreateTableIfNotExists(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
+	s := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
+	err = student.CreateStudent(db, s)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	s = student.Student{ID: 1, FirstName: "Paulo"}
+	err = student.UpdateStudent(db, s)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = student.DeleteStudent(db, 3)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	students, err := student.GetAllStudents(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(students)
+
+	//------------------------------------------------------------------------------------
+	err = student_subject.CreateTableIfNotExists(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student_subject.AddStudentToSubject(db, 1, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = student_subject.RemoveStudentFromSubject(db, 1, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	studentSubject, err := student_subject.GetSubjectsByStudentID(db, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	studentSubject, err = student_subject.GetStudentsBySubjectID(db, 1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(studentSubject)
+	//-------------------------------------------------------------------------------------------------------------
 	err = professor.CreateProfessors(db)
 	if err != nil {
 		fmt.Println(err)
@@ -34,16 +93,17 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	err = professor.RemoveProfessor(db, 8)
-	if err != nil {
-		return
-	}
-	profs, err := professor.GetAllProfessors(db)
+	//err = professor.RemoveProfessor(db, 1)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(profs)
+	professors, err := professor.GetAllProfessors(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(professors)
 
 	/*-------------------------------------------------SUBJECT TESTS----------------------------------------------------*/
 	err = subject.CreateTableIfNotExist(db)
@@ -59,52 +119,19 @@ func main() {
 	}
 	err = subject.RemoveSubject(db, 8)
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	subje := subject.Subject{ID: 2, Name: "AED", Description: "yay"}
-	subject.UpdateSubject(db, subje)
+	err = subject.UpdateSubject(db, subje)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	subs, err := subject.GetAllSubjects(db)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println(subs)
-
 }
-
-/*func main() {
-	database, err := sql.Open("sqlite3", "./clip_holy_grail.db")
-	if err != nil {
- 		fmt.Println(err)
-		return
-	}
-
-	statement, err := database.Prepare("CREATE TABLE IF NOT EXISTS prof (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, cursoIds TEXT, startDate DATE, cadeiraIds TEXT)")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	statement.Exec()
-	statement, err = database.Prepare("INSERT INTO prof (firstname, lastname, cursoIds, cadeiraIds) VALUES (?, ?, ?, ?)")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	statement.Exec("Paulo", "Montezuma", "MIEEC", "IT")
-	rows, err := database.Query("SELECT id, firstname, lastname, cursoIds, cadeiraIds FROM prof")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	var id int
-	var firstname, lastname string
-	var cursoIds string
-	var cadeiraIds string
-	for rows.Next() {
-		rows.Scan(&id, &firstname, &lastname, &cursoIds, &cadeiraIds)
-		fmt.Println(strconv.Itoa(id) + ": " + firstname + " " + lastname + " " + cursoIds + " " + cadeiraIds)
-	}
-}*/
