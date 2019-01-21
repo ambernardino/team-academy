@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"team-academy/professor"
+	"team-academy/subject"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -47,7 +48,35 @@ func main() {
 		return
 	}
 
+	err = subject.CreateTableIfNotExists(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	newSubject := subject.Subject{Name: "Eletrónica 1", Description: "Uma seca do catano!"}
+	err = subject.CreateSubject(db, newSubject)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	updatedSubject := subject.Subject{ID: 2, Name: "Eletrónica 2", Description: "Outra seca desgraçada"}
+	err = subject.UpdateSubjectInfo(db, updatedSubject)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	subjects, err := subject.GetAllSubjects(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	fmt.Println(professors)
+	fmt.Println()
+	fmt.Println(subjects)
 }
 
 /*func main() {
