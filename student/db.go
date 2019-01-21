@@ -31,8 +31,8 @@ func UpdateStudent(db *gorm.DB, student Student) (err error) {
 	return db.Model(&Student{}).Update(student).Error
 }
 
-func DeleteStudent(db *gorm.DB, student Student) (err error) {
-	return db.Delete(&student).Error
+func DeleteStudent(db *gorm.DB, id int) (err error) {
+	return db.Delete(&Student{ID: id}).Error
 }
 
 func GetAllStudents(db *gorm.DB) (students []Student, err error) {

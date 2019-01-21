@@ -28,15 +28,14 @@ func main() {
 		return
 	}
 
-	s1 := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
-	err = student.UpdateStudent(db, s1)
+	s := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
+	err = student.UpdateStudent(db, s)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	s2 := student.Student{ID: 1}
-	err = student.DeleteStudent(db, s2)
+	err = student.DeleteStudent(db, 3)
 	if err != nil {
 		fmt.Println(err)
 		return
