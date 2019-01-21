@@ -60,29 +60,40 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-
 	db.SingularTable(true)
-	if !db.HasTable(Professor{}) {
-		err = db.CreateTable(Professor{}).Error
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+	err = createTableIfNotExist(db)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
+	err = createProfessors(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	profs, err := getAllProfessors(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(profs)
+}
 
+func createTableIfNotExist (db *gorm.DB) (error){
+	if !db.HasTable(Professor{}) {
+		return db.CreateTable(Professor{}).Error
+	}
+	return nil
+}
+
+func createProfessors (db *gorm.DB) (err error){
 	newProfessor := Professor{FirstName: "Paulo", LastName: "Montezuma", CursoIds: "MIEEC", CadeiraIds: "IT", StartDate: time.Now()}
 	err = db.Save(&newProfessor).Error
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	var professors []Professor
-	err = db.Find(&professors).Error
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println(professors)
+	return 
 }
+
+func getAllProfessors (db *gorm.DB) (professors []Professor, err error){
+	err = db.Find(&professors).Error
+	return
+}
+
