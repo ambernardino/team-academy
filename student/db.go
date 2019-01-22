@@ -23,8 +23,13 @@ func CreateTableIfNotExists(db *gorm.DB) (err error) {
 }
 
 func CreateStudent(db *gorm.DB, student Student) (err error) {
-	newStudent := student
-	return db.Save(&newStudent).Error
+	return db.Save(&student).Error
+}
+
+func GetStudentByID(db *gorm.DB, ID int) (student Student, err error) {
+	err = db.First(&student, &Student{ID: ID}).Error
+	//err = db.Debug().Model(&Student{}).Where(&Student{ID: ID}).Find(&student).Error
+	return
 }
 
 func UpdateStudent(db *gorm.DB, student Student) (err error) {

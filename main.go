@@ -19,6 +19,8 @@ func main() {
 		return
 	}
 
+	db.SingularTable(true)
+
 	err = professor.CreateTableIfNotExists(db)
 	if err != nil {
 		fmt.Println(err)
