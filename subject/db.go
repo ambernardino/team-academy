@@ -29,6 +29,11 @@ func UpdateSubjectInfo(db *gorm.DB, subject Subject) (err error) {
 	return db.Model(&Subject{}).Updates(&subject).Error
 }
 
+func GetSubjectByID(db *gorm.DB, id int) (subject Subject, err error) {
+	err = db.First(&subject, &Subject{ID: id}).Error
+	return
+}
+
 func GetAllSubjects(db *gorm.DB) (subjects []Subject, err error) {
 	err = db.Find(&subjects).Error
 	return

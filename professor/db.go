@@ -23,7 +23,7 @@ func CreateTableIfNotExists(db *gorm.DB) (err error) {
 }
 
 func CreateProfessor(db *gorm.DB, professor Professor) (err error) {
-	return db.Save(&newProfessor).Error
+	return db.Save(&professor).Error
 }
 
 func GetAllProfessors(db *gorm.DB) (professors []Professor, err error) {
