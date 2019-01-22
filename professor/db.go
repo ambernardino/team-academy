@@ -16,15 +16,13 @@ type Professor struct {
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (err error) {
-	db.SingularTable(true)
 	if !db.HasTable(Professor{}) {
 		return db.CreateTable(Professor{}).Error
 	}
 	return
 }
 
-func CreateProfessor(db *gorm.DB) (err error) {
-	newProfessor := Professor{FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now()}
+func CreateProfessor(db *gorm.DB, professor Professor) (err error) {
 	return db.Save(&newProfessor).Error
 }
 

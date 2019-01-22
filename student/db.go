@@ -18,13 +18,11 @@ func CreateTableIfNotExists(db *gorm.DB) (err error) {
 	if !db.HasTable(Student{}) {
 		return db.CreateTable(Student{}).Error
 	}
-
 	return
 }
 
 func CreateStudent(db *gorm.DB, student Student) (err error) {
-	newStudent := student
-	return db.Save(&newStudent).Error
+	return db.Save(&student).Error
 }
 
 func UpdateStudent(db *gorm.DB, student Student) (err error) {
@@ -33,6 +31,11 @@ func UpdateStudent(db *gorm.DB, student Student) (err error) {
 
 func DeleteStudent(db *gorm.DB, id int) (err error) {
 	return db.Delete(&Student{ID: id}).Error
+}
+
+func GetStudentByID(db *gorm.DB, id int) (student Student, err error) {
+	err = db.First(&student, &Student{ID: id}).Error
+	return
 }
 
 func GetAllStudents(db *gorm.DB) (students []Student, err error) {

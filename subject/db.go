@@ -11,7 +11,6 @@ type Subject struct {
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (err error) {
-	db.SingularTable(true)
 	if !db.HasTable(Subject{}) {
 		return db.CreateTable(Subject{}).Error
 	}
