@@ -18,6 +18,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	db.SingularTable(true)
 
 	err = professor.CreateTableIfNotExists(db)
 	if err != nil {
@@ -43,7 +44,8 @@ func main() {
 		return
 	}
 
-	err = professor.CreateProfessor(db)
+	newProfessor := professor.Professor{FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now()}
+	err = professor.CreateProfessor(db, newProfessor)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -69,15 +71,15 @@ func main() {
 		return
 	}
 
-	newProfessor := professor.Professor{ID: 10, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now()}
-	err = professor.UpdateProfessorInfo(db, newProfessor)
+	updatedProfessor := professor.Professor{ID: 10, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now()}
+	err = professor.UpdateProfessorInfo(db, updatedProfessor)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	s := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
-	err = student.UpdateStudent(db, s)
+	updatedStudent := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
+	err = student.UpdateStudent(db, updatedStudent)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -135,17 +137,17 @@ func main() {
 	}
 	fmt.Println(subjects)
 
-	studentSubject, err := student_subject.GetSubjectsByStudentID(db, 1)
+	studentsSubjects, err := student_subject.GetSubjectsByStudentID(db, 1)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(studentSubject)
+	fmt.Println(studentsSubjects)
 
-	studentSubject, err = student_subject.GetSubjectsByStudentID(db, 1)
+	studentsSubjects, err = student_subject.GetSubjectsByStudentID(db, 1)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(studentSubject)
+	fmt.Println(studentsSubjects)
 }
