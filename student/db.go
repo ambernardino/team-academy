@@ -38,3 +38,8 @@ func GetAllStudents(db *gorm.DB) (students []Student, err error) {
 	err = db.Find(&students).Error
 	return
 }
+
+func GetStudentByID(db *gorm.DB, id int) (student Student, err error) {
+	err = db.First(&student, &Student{ID: id}).Error
+	return
+}
