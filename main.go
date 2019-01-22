@@ -6,7 +6,6 @@ import (
 	"team-academy/student"
 	"team-academy/student_subject"
 	"team-academy/subject"
-	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
@@ -44,20 +43,6 @@ func main() {
 		return
 	}
 
-	newProfessor := professor.Professor{FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now()}
-	err = professor.CreateProfessor(db, newProfessor)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	newStudent := student.Student{FirstName: "Pedro", LastName: "Oliveira", CursoID: 1, StartDate: time.Now()}
-	err = student.CreateStudent(db, newStudent)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
 	newSubject := subject.Subject{ID: 2, Name: "Eletrónica 1", Description: "Uma seca desgraçada"}
 	err = subject.CreateSubject(db, newSubject)
 	if err != nil {
@@ -71,34 +56,8 @@ func main() {
 		return
 	}
 
-	updatedProfessor := professor.Professor{ID: 10, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now()}
-	err = professor.UpdateProfessorInfo(db, updatedProfessor)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	updatedStudent := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
-	err = student.UpdateStudent(db, updatedStudent)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
 	updatedSubject := subject.Subject{ID: 2, Name: "Eletrónica 2", Description: "Outra seca desgraçada"}
 	err = subject.UpdateSubjectInfo(db, updatedSubject)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = professor.DeleteProfessor(db, 1)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = student.DeleteStudent(db, 3)
 	if err != nil {
 		fmt.Println(err)
 		return
