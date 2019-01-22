@@ -1,6 +1,10 @@
 package subject
 
 import (
+
+	//"team-academy/subject"
+	"team-academy/component"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -19,7 +23,12 @@ func CreateTableIfNotExists(db *gorm.DB) (err error) {
 }
 
 func CreateSubject(db *gorm.DB, newSubject Subject) (err error) {
-	return db.Save(&newSubject).Error
+	_, err = GetSubjectByID(db, newSubject.ID)
+	if err != nil {
+		return db.Save(&newSubject).Error
+	}
+	err = component.ErrSomethingAlreadyExists
+	return
 }
 
 func DeleteSubject(db *gorm.DB, id int) (err error) {
@@ -32,5 +41,10 @@ func UpdateSubjectInfo(db *gorm.DB, subject Subject) (err error) {
 
 func GetAllSubjects(db *gorm.DB) (subjects []Subject, err error) {
 	err = db.Find(&subjects).Error
+	return
+}
+
+func GetSubjectByID(db *gorm.DB, id int) (sub Subject, err error) {
+	err = db.Model(&Subject{}).Where(&Subject{ID: sub.ID}).Find(&sub).Error
 	return
 }
