@@ -22,14 +22,18 @@ func CreateTable(db *gorm.DB) (err error) {
 	return
 }
 
-func CreateStudent(db *gorm.DB) (err error) {
-	newStudent := Student{FirstName: "John", LastName: "Doe", DegreeID: 1, StartDate: time.Now()}
+func CreateStudent(db *gorm.DB, newStudent Student) (err error) {
 	err = db.Save(&newStudent).Error
 	return
 }
 
 func GetStudents(db *gorm.DB) (students []Student, err error) {
 	err = db.Find(&students).Error
+	return
+}
+
+func GetStudentByID(db *gorm.DB, id int) (student Student, err error) {
+	err = db.Find(&Student{ID: id}).Error
 	return
 }
 
