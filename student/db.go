@@ -18,7 +18,6 @@ func CreateTableIfNotExists(db *gorm.DB) (err error) {
 	if !db.HasTable(Student{}) {
 		return db.CreateTable(Student{}).Error
 	}
-
 	return
 }
 

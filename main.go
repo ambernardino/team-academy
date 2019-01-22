@@ -18,7 +18,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-
+	db.SingularTable(true)
 	err = professor.CreateTableIfNotExists(db)
 	if err != nil {
 		fmt.Println(err)
@@ -43,7 +43,8 @@ func main() {
 		return
 	}
 
-	err = professor.CreateProfessor(db)
+	newProfessor := professor.Professor{FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now()}
+	err = professor.CreateProfessor(db, newProfessor)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -69,7 +70,7 @@ func main() {
 		return
 	}
 
-	newProfessor := professor.Professor{ID: 10, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now()}
+	newProfessor = professor.Professor{ID: 10, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now()}
 	err = professor.UpdateProfessorInfo(db, newProfessor)
 	if err != nil {
 		fmt.Println(err)

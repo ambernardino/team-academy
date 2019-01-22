@@ -23,8 +23,7 @@ func CreateTableIfNotExists(db *gorm.DB) (err error) {
 	return
 }
 
-func CreateProfessor(db *gorm.DB) (err error) {
-	newProfessor := Professor{FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now()}
+func CreateProfessor(db *gorm.DB, newProfessor Professor) (err error) {
 	return db.Save(&newProfessor).Error
 }
 
@@ -39,4 +38,9 @@ func UpdateProfessorInfo(db *gorm.DB, professor Professor) (err error) {
 
 func DeleteProfessor(db *gorm.DB, id int) (err error) {
 	return db.Delete(&Professor{ID: id}).Error
+}
+
+func GetProfessorByID(db *gorm.DB, id int) (prof Professor, err error) {
+	err = db.Model(&Professor{}).Where(&Professor{ID: id}).Find(&prof).Error
+	return
 }
