@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"team-academy/grade"
 	"team-academy/professor"
 	"team-academy/student"
 	"team-academy/student_subject"
@@ -42,11 +43,16 @@ func main() {
 		return
 	}
 
-	newSubject := subject.Subject{ID: 2, Name: "Eletrónica 1", Description: "Uma seca desgraçada"}
-	err = subject.CreateSubject(db, newSubject)
+	err = grade.CreateTableIfNotExists(db)
 	if err != nil {
 		fmt.Println(err)
 		return
+	}
+
+	newSubject := subject.Subject{ID: 1, Name: "IT", Description: "Uma seca desgraçada"}
+	err = subject.CreateSubject(db, newSubject)
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	err = student_subject.AddStudentToSubject(db, 1, 1)
@@ -55,12 +61,12 @@ func main() {
 		return
 	}
 
-	updatedSubject := subject.Subject{ID: 2, Name: "Eletrónica 2", Description: "Outra seca desgraçada"}
+	/*updatedSubject := subject.Subject{ID: 4, Name: "Eletrónica 1", Description: "Outra seca desgraçada"}
 	err = subject.UpdateSubjectInfo(db, updatedSubject)
 	if err != nil {
 		fmt.Println(err)
 		return
-	}
+	}*/
 
 	err = subject.DeleteSubject(db, 8)
 	if err != nil {
@@ -68,11 +74,11 @@ func main() {
 		return
 	}
 
-	err = student_subject.RemoveStudentFromSubject(db, 1, 1)
+	/*err = student_subject.RemoveStudentFromSubject(db, 1, 1)
 	if err != nil {
 		fmt.Println(err)
 		return
-	}
+	}*/
 
 	subjects, err := subject.GetAllSubjects(db)
 	if err != nil {
@@ -93,5 +99,5 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(studentSubject)
+	//fmt.Println(studentSubject)
 }
