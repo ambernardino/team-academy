@@ -21,6 +21,14 @@ type StudentGrade struct {
 	SubjectID        int
 }
 
+func CreateTableIfNotExists(db *gorm.DB) (err error) {
+	if !db.HasTable(Grade{}) {
+		return db.CreateTable(Grade{}).Error
+	}
+
+	return
+}
+
 func GetStudentsGrades(db *gorm.DB) (grades []StudentGrade, err error) {
 	err = db.Table("student").Select("student_subject.student_id, student.first_name, student.last_name, subject.name, student_subject.subject_id").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject on subject.id = student_subject.subject_id").Scan(&grades).Error
 	for _, v := range grades {
