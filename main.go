@@ -1,7 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"path/filepath"
+	"strconv"
 	"team-academy/grade"
 	"team-academy/professor"
 	"team-academy/student"
@@ -9,9 +14,47 @@ import (
 	"team-academy/subject"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
+	summerfish "github.com/plicca/summerfish-swagger"
 )
+
+type App struct {
+	Db *gorm.DB
+}
+
+var app App
+
+func GenerateSwaggerDocsAndEndpoints(router *mux.Router, endpoint string) (err error) {
+	config := summerfish.Config{
+		Schemes:                []string{"http", "https"},
+		SwaggerFileRoute:       summerfish.SwaggerFileRoute,
+		SwaggerFilePath:        summerfish.SwaggerFileRoute,
+		SwaggerFileHeaderRoute: summerfish.SwaggerFileRoute,
+		SwaggerUIRoute:         summerfish.SwaggerUIRoute,
+		BaseRoute:              "/",
+	}
+
+	config.SwaggerFilePath, err = filepath.Abs("res/swagger.json")
+	if err != nil {
+		return
+	}
+
+	routerInformation, err := summerfish.GetInfoFromRouter(router)
+	if err != nil {
+		return
+	}
+
+	scheme := summerfish.SchemeHolder{Schemes: config.Schemes, Host: endpoint, BasePath: config.BaseRoute}
+	err = scheme.GenerateSwaggerFile(routerInformation, config.SwaggerFilePath)
+	if err != nil {
+		return
+	}
+
+	log.Println("Swagger documentation generated")
+	return summerfish.AddSwaggerUIEndpoints(router, config)
+}
 
 func main() {
 	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
@@ -19,13 +62,105 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	app.Db = db
 	db.SingularTable(true)
-	err = populateDatabase(db)
+	/*err = populateDatabase(db)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}*/
+
+	// ------------------- Gorilla-mux -------------------
+	r := mux.NewRouter()
+
+	// CreateStudent doesn't need student_id
+	r.HandleFunc("/student/register_student", CreateStudent).Methods("POST")
+	r.HandleFunc("/student/{student_id}", GetStudent).Methods("GET")
+	r.HandleFunc("/student/update_student", UpdateStudent).Methods("PUT")
+	r.HandleFunc("/student/{student_id}", DeleteStudent).Methods("DELETE")
+
+	err = GenerateSwaggerDocsAndEndpoints(r, "localhost:8080")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	// Main router
+	http.ListenAndServe(":8080", r)
 }
+
+func CreateStudent(w http.ResponseWriter, r *http.Request) {
+	var st student.Student
+	err := json.NewDecoder(r.Body).Decode(&st)
+	st.StartDate = time.Now().UTC()
+
+	err = student.CreateStudent(app.Db, st)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	fmt.Fprintf(w, "Student %v registered with sucess", st)
+}
+
+func GetStudent(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	student_id := vars["student_id"]
+
+	st_id, err := strconv.Atoi(student_id)
+	if err != nil {
+		fmt.Fprintln(w, "Error converting student_id to int")
+		return
+	}
+
+	s, err := student.GetStudentByID(app.Db, st_id)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	stEncoded, err := json.Marshal(s)
+	if err != nil {
+		fmt.Fprintln(w, "Error using json on student")
+		return
+	}
+
+	w.Write(stEncoded)
+}
+
+func UpdateStudent(w http.ResponseWriter, r *http.Request) {
+	var st student.Student
+	err := json.NewDecoder(r.Body).Decode(&st)
+
+	fmt.Fprintf(w, "Student %v\n", st)
+
+	err = student.UpdateStudent(app.Db, st)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	fmt.Fprintf(w, "Student %v was updated", st)
+}
+
+func DeleteStudent(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	s_studentid := vars["student_id"]
+
+	st_id, err := strconv.Atoi(s_studentid)
+	if err != nil {
+		fmt.Fprintln(w, "Error converting student_id to int")
+		return
+	}
+
+	err = student.DeleteStudent(app.Db, st_id)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	fmt.Fprintf(w, "Student %d was deleted", st_id)
+}
+
+// ------------------- Gorilla-mux -------------------
 
 func populateDatabase(db *gorm.DB) (err error) {
 	err = professor.CreateTableIfNotExists(db)

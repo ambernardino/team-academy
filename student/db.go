@@ -1,6 +1,8 @@
 package student
 
 import (
+	"fmt"
+	"team-academy/component"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -27,10 +29,18 @@ func CreateStudent(db *gorm.DB, student Student) (err error) {
 }
 
 func UpdateStudent(db *gorm.DB, student Student) (err error) {
-	return db.Model(&Student{}).Update(student).Error
+	st, err := GetStudentByID(db, student.ID)
+	if err != nil || st.ID != student.ID {
+		fmt.Println(component.ErrStudentNotFound)
+	}
+	return db.Model(&Student{}).Update(&student).Error
 }
 
 func DeleteStudent(db *gorm.DB, id int) (err error) {
+	st, err := GetStudentByID(db, id)
+	if err != nil || st.ID != id {
+		fmt.Println(component.ErrStudentNotFound)
+	}
 	return db.Delete(&Student{ID: id}).Error
 }
 
