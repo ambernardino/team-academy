@@ -29,10 +29,10 @@ func CreateTableIfNotExists(db *gorm.DB) (err error) {
 }
 
 func AddStudentToSubject(db *gorm.DB, studentID, subjectID int) (err error) {
-	rows, err := db.Table("student").Select("student_subject.student_id, student_subject.subject_id").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Rows()
+	rows, err := db.Table("student").Select("student_subject.student_id, student_subject.subject_id").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: studentID}).Rows()
 
 	if rows.Next() {
-		err = component.ErrSomethingAlreadyExists
+		err = component.ErrStudentAlreadyInSubject
 		return
 	}
 
@@ -40,7 +40,7 @@ func AddStudentToSubject(db *gorm.DB, studentID, subjectID int) (err error) {
 }
 
 func RemoveStudentFromSubject(db *gorm.DB, studentID, subjectID int) (err error) {
-	return db.Delete(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Error
+	return db.Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Delete(&StudentSubject{}).Error
 }
 
 func GetSubjectsFromStudentID(db *gorm.DB, id int) (subjects []StudentSubject, err error) {
@@ -60,6 +60,12 @@ func Delete(db *gorm.DB, id int) (err error) {
 func IsStudentRegisteredInSubject(db *gorm.DB, studentID, subjectID int) (err error) {
 	var studentSubject StudentSubject
 	err = db.First(&studentSubject, &StudentSubject{StudentID: studentID, SubjectID: subjectID}).Error
+func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
+	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&infos).Error
+
+	for _, v := range infos {
+		fmt.Println(v)
+	}
 	return
 }
 

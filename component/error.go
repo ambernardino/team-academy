@@ -1,6 +1,8 @@
 package component
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type TeamAcademyError struct {
 	code int
@@ -8,6 +10,7 @@ type TeamAcademyError struct {
 }
 
 var ErrSomethingAlreadyExists = &TeamAcademyError{http.StatusConflict, "Something is duplicated"}
+var ErrStudentAlreadyInSubject = &TeamAcademyError{http.StatusConflict, "Student is already registered in subject"}
 
 //Error returns the user-readable message
 func (err TeamAcademyError) Error() string {
