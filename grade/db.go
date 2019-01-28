@@ -54,6 +54,16 @@ func GetGradeByStudentIDAndSubjectID(db *gorm.DB, studentID int, subjectID int) 
 	return
 }
 
+func GetGradeByStudentID(db *gorm.DB, ID int) (grades []Grade, err error) {
+	err = db.Model(&Grade{}).Where(&Grade{StudentID: ID}).Find(&grades).Error
+	return
+}
+
+func GetGradeBySubjectID(db *gorm.DB, ID int) (grades []Grade, err error) {
+	err = db.Model(&Grade{}).Where(&Grade{SubjectID: ID}).Find(&grades).Error
+	return
+}
+
 func UpdateGrade(db *gorm.DB, grade Grade) (err error) {
-	return nil
+	return db.Model(&Grade{}).Where(&Grade{StudentID: grade.StudentID, SubjectID: grade.SubjectID}).Update(grade).Error
 }

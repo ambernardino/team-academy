@@ -1,8 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"team-academy/grade"
 	"team-academy/professor"
@@ -11,9 +15,18 @@ import (
 	"team-academy/subject"
 	"time"
 
+	"github.com/gorilla/mux"
+	summerfish "github.com/plicca/summerfish-swagger"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+type App struct {
+	DB *gorm.DB
+}
+
+var app App
 
 func main() {
 	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
@@ -27,6 +40,211 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	app = App{DB: db}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/professor/{professorID}", GetProfessor).Methods("GET")
+	r.HandleFunc("/professor/create", CreateProfessor).Methods("POST")
+	r.HandleFunc("/professor/update", UpdateProfessor).Methods("PUT")
+	r.HandleFunc("/professor/{professorID}", DeleteProfessor).Methods("DELETE")
+	r.HandleFunc("/professor/get_grade_by_student_id/{studentID}", GetGradeByStudentID).Methods("GET")
+	r.HandleFunc("/professor/get_grade_by_subject_id/{subjectID}", GetGradeBySubjectID).Methods("GET")
+	r.HandleFunc("/professor/give_grade", GiveGrade).Methods("POST")
+	r.HandleFunc("/professor/update_grade", UpdateGrade).Methods("PUT")
+	err = GenerateSwaggerDocsAndEndpoints(r, "localhost:8080")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		return
+	}
+}
+
+func GetProfessor(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	professorID := vars["professorID"]
+	ID, err := strconv.Atoi(professorID)
+	if err != nil {
+		return
+	}
+
+	prof, err := professor.GetProfessorByID(app.DB, ID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	array, err := json.Marshal(prof)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(array)
+}
+
+func CreateProfessor(w http.ResponseWriter, r *http.Request) {
+	var prof professor.Professor
+	err := json.NewDecoder(r.Body).Decode(&prof)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	prof.StartDate = time.Now().UTC()
+	err = professor.CreateProfessor(app.DB, prof)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	fmt.Fprintf(w, "%v", prof)
+}
+
+func UpdateProfessor(w http.ResponseWriter, r *http.Request) {
+	var prof professor.Professor
+	err := json.NewDecoder(r.Body).Decode(&prof)
+	if err != nil {
+		return
+	}
+
+	err = professor.UpdateProfessorInfo(app.DB, prof)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	fmt.Fprintf(w, "%v", prof)
+}
+
+func DeleteProfessor(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	professorID := vars["professorID"]
+	ID, err := strconv.Atoi(professorID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	fmt.Println(ID)
+
+	err = professor.DeleteProfessor(app.DB, ID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+}
+
+func GetGradeByStudentID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	studentID := vars["studentID"]
+	ID, err := strconv.Atoi(studentID)
+	if err != nil {
+		return
+	}
+
+	grd, err := grade.GetGradeByStudentID(app.DB, ID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	array, err := json.Marshal(grd)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(array)
+}
+
+func GetGradeBySubjectID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	subjectID := vars["subjectID"]
+	ID, err := strconv.Atoi(subjectID)
+	if err != nil {
+		return
+	}
+
+	grd, err := grade.GetGradeBySubjectID(app.DB, ID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	array, err := json.Marshal(grd)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write(array)
+}
+
+func GiveGrade(w http.ResponseWriter, r *http.Request) {
+	var grd grade.Grade
+	err := json.NewDecoder(r.Body).Decode(&grd)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = grade.GiveGrade(app.DB, grd)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	fmt.Fprintf(w, "%v", grd)
+}
+
+func UpdateGrade(w http.ResponseWriter, r *http.Request) {
+	var grd grade.Grade
+	err := json.NewDecoder(r.Body).Decode(&grd)
+	if err != nil {
+		return
+	}
+
+	err = grade.UpdateGrade(app.DB, grd)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	fmt.Fprintf(w, "%v", grd)
+}
+
+func GenerateSwaggerDocsAndEndpoints(router *mux.Router, endpoint string) (err error) {
+	config := summerfish.Config{
+		Schemes:                []string{"http", "https"},
+		SwaggerFileRoute:       summerfish.SwaggerFileRoute,
+		SwaggerFilePath:        summerfish.SwaggerFileRoute,
+		SwaggerFileHeaderRoute: summerfish.SwaggerFileRoute,
+		SwaggerUIRoute:         summerfish.SwaggerUIRoute,
+		BaseRoute:              "/",
+	}
+
+	config.SwaggerFilePath, err = filepath.Abs("res/swagger.json")
+	if err != nil {
+		return
+	}
+
+	routerInformation, err := summerfish.GetInfoFromRouter(router)
+	if err != nil {
+		return
+	}
+
+	scheme := summerfish.SchemeHolder{Schemes: config.Schemes, Host: endpoint, BasePath: config.BaseRoute}
+	err = scheme.GenerateSwaggerFile(routerInformation, config.SwaggerFilePath)
+	if err != nil {
+		return
+	}
+
+	log.Println("Swagger documentation generated")
+	return summerfish.AddSwaggerUIEndpoints(router, config)
 }
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
@@ -35,13 +253,6 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 	message = "Hello " + message
 	w.Write([]byte(message))
 }
-
-/* func main() {
-	http.HandleFunc("/", sayHello)
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		return
-	}
-} */
 
 func populateDatabase(db *gorm.DB) (err error) {
 	existsProfessorTable, err := professor.CreateTableIfNotExists(db)

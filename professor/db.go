@@ -1,15 +1,16 @@
 package professor
 
 import (
+	"team-academy/component"
 	"time"
 
 	"github.com/jinzhu/gorm"
 )
 
 type Professor struct {
-	ID         int `gorm:"AUTO_INCREMENT"`
-	FirstName  string
-	LastName   string
+	ID         int    `gorm:"AUTO_INCREMENT"`
+	FirstName  string `json:"first_name,omitempty"`
+	LastName   string `json:"last_name,omitempty"`
 	CursoIDs   string
 	CadeiraIDS string
 	StartDate  time.Time
@@ -32,7 +33,17 @@ func GetAllProfessors(db *gorm.DB) (professors []Professor, err error) {
 }
 
 func UpdateProfessorInfo(db *gorm.DB, professor Professor) (err error) {
-	return db.Model(&Professor{}).Updates(&professor).Error
+	if professor.ID <= 0 {
+		err = component.ErrMissingParameters
+		return
+	}
+
+	_, err = GetProfessorByID(db, professor.ID)
+	if err != nil {
+		return
+	}
+
+	return db.Model(&Professor{}).Update(professor).Error
 }
 
 func DeleteProfessor(db *gorm.DB, id int) (err error) {
