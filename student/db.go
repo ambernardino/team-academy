@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Student struct {
@@ -42,3 +43,7 @@ func GetAllStudents(db *gorm.DB) (students []Student, err error) {
 	err = db.Find(&students).Error
 	return
 }
+
+/*func MergeTables(db *gorm.DB) {
+
+}*/
