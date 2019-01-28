@@ -1,6 +1,7 @@
 package professor
 
 import (
+	"team-academy/component"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -32,6 +33,12 @@ func GetAllProfessors(db *gorm.DB) (professors []Professor, err error) {
 }
 
 func UpdateProfessorInfo(db *gorm.DB, professor Professor) (err error) {
+	_, err = GetProfessorByID(db, professor.ID)
+	if err != nil {
+		return component.ErrProfessorDoesntExist
+	} else if professor.ID <= 0 {
+		return component.ErrMissingParameters
+	}
 	return db.Model(&Professor{}).Updates(&professor).Error
 }
 
