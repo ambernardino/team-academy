@@ -165,7 +165,7 @@ func Test_GetSubjectAndInfoByStudentID(t *testing.T) {
 		return
 	}
 
-	err = GetSubjectAndInfoByStudentID(db, testStudent.ID)
+	_, err = GetSubjectAndInfoByStudentID(db, testStudent.ID)
 	if err != nil {
 		t.Error("Couldn't get subject and info of given student")
 		return
