@@ -11,6 +11,7 @@ type TeamAcademyError struct {
 
 var ErrSomethingAlreadyExists = &TeamAcademyError{http.StatusConflict, "Something is duplicated"}
 var ErrStudentAlreadyInSubject = &TeamAcademyError{http.StatusConflict, "Student is already registered in subject"}
+var ErrMissingParameters = &TeamAcademyError{http.StatusConflict, "Missing parameters"}
 
 //Error returns the user-readable message
 func (err TeamAcademyError) Error() string {

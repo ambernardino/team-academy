@@ -1,15 +1,16 @@
 package student
 
 import (
+	"team-academy/component"
 	"time"
 
 	"github.com/jinzhu/gorm"
 )
 
 type Student struct {
-	ID        int `gorm:"AUTO_INCREMENT"`
-	FirstName string
-	LastName  string
+	ID        int    `gorm:"AUTO_INCREMENT"`
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
 	CursoID   int
 	StartDate time.Time
 }
@@ -26,6 +27,16 @@ func CreateStudent(db *gorm.DB, student Student) (err error) {
 }
 
 func UpdateStudent(db *gorm.DB, student Student) (err error) {
+	if student.ID <= 0 {
+		err = component.ErrMissingParameters
+		return
+	}
+
+	_, err = GetStudentByID(db, student.ID)
+	if err != nil {
+		return
+	}
+
 	return db.Model(&Student{}).Update(student).Error
 }
 
