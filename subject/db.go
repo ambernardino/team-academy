@@ -14,12 +14,11 @@ type Subject struct {
 	Description string
 }
 
-func CreateTableIfNotExists(db *gorm.DB) (err error) {
-	db.SingularTable(true)
+func CreateTableIfNotExists(db *gorm.DB) (existss bool, err error) {
 	if !db.HasTable(Subject{}) {
-		return db.CreateTable(Subject{}).Error
+		return false, db.CreateTable(Subject{}).Error
 	}
-	return
+	return true, nil
 }
 
 func CreateSubject(db *gorm.DB, newSubject Subject) (err error) {
@@ -44,7 +43,7 @@ func GetAllSubjects(db *gorm.DB) (subjects []Subject, err error) {
 	return
 }
 
-func GetSubjectByID(db *gorm.DB, id int) (sub Subject, err error) {
-	err = db.Model(&Subject{}).Where(&Subject{ID: sub.ID}).Find(&sub).Error
+func GetSubjectByID(db *gorm.DB, id int) (subject Subject, err error) {
+	err = db.First(&subject, &Subject{ID: id}).Error
 	return
 }

@@ -21,11 +21,11 @@ type StudentGrade struct {
 	SubjectID        int
 }
 
-func CreateTableIfNotExists(db *gorm.DB) (err error) {
+func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(Grade{}) {
-		return db.CreateTable(Grade{}).Error
+		return false, db.CreateTable(Grade{}).Error
 	}
-	return
+	return true, nil
 }
 
 func GiveGrade(db *gorm.DB, grade Grade) (err error) {

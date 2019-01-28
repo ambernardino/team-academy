@@ -18,3 +18,4 @@ func (err TeamAcademyError) Code() int {
 }
 
 var ErrSomethingAlreadyExists = &TeamAcademyError{http.StatusConflict, "Something is duplicated"}
+var ErrStudentAlreadyInSubject = &TeamAcademyError{http.StatusConflict, "Student is already registered in subject"}
