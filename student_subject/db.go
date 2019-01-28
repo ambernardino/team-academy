@@ -43,12 +43,18 @@ func RemoveStudentFromSubject(db *gorm.DB, studentID, subjectID int) (err error)
 	return db.Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Delete(&StudentSubject{}).Error
 }
 
+<<<<<<< HEAD
 func GetSubjectsFromStudentID(db *gorm.DB, id int) (subjects []StudentSubject, err error) {
 	err = db.Model(&StudentSubject{}).Find(&subjects).Where(&StudentSubject{SubjectID: id}).Error
+=======
+func GetSubjectsByStudentID(db *gorm.DB, id int) (subjects []StudentSubject, err error) {
+	err = db.Model(&StudentSubject{}).Where(&StudentSubject{StudentID: id}).Find(&subjects).Error
+>>>>>>> origin/team-red-p
 	return
 }
 
 func GetStudentsBySubjectID(db *gorm.DB, id int) (students []StudentSubject, err error) {
+<<<<<<< HEAD
 	err = db.Model(&StudentSubject{}).Find(&students).Where(&StudentSubject{StudentID: id}).Error
 	return
 }
@@ -75,5 +81,8 @@ func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err
 	for _, v := range infos {
 		fmt.Println(v)
 	}
+=======
+	err = db.Model(&StudentSubject{}).Where(&StudentSubject{SubjectID: id}).Find(&students).Error
+>>>>>>> origin/team-red-p
 	return
 }

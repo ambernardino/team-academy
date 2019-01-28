@@ -38,3 +38,8 @@ func UpdateProfessorInfo(db *gorm.DB, professor Professor) (err error) {
 func DeleteProfessor(db *gorm.DB, id int) (err error) {
 	return db.Delete(&Professor{ID: id}).Error
 }
+
+func GetProfessorByID(db *gorm.DB, id int) (professor Professor, err error) {
+	err = db.Model(&Professor{}).Where(&Professor{ID: id}).Find(&professor).Error
+	return
+}
