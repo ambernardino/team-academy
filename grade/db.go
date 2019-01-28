@@ -1,4 +1,4 @@
-package grades
+package grade
 
 import (
 	"fmt"
@@ -21,12 +21,12 @@ type StudentGrade struct {
 	SubjectID        int
 }
 
-func CreateTableIfNotExists(db *gorm.DB) (err error) {
+func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(Grade{}) {
-		return db.CreateTable(Grade{}).Error
+		return false, db.CreateTable(Grade{}).Error
 	}
 
-	return
+	return true, nil
 }
 
 func GetStudentsGrades(db *gorm.DB) (grades []StudentGrade, err error) {

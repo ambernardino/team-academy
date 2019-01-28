@@ -15,12 +15,11 @@ type Professor struct {
 	StartDate  time.Time
 }
 
-func CreateTableIfNotExists(db *gorm.DB) (err error) {
-	db.SingularTable(true)
+func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(Professor{}) {
-		return db.CreateTable(Professor{}).Error
+		return false, db.CreateTable(Professor{}).Error
 	}
-	return
+	return true, nil
 }
 
 func CreateProfessor(db *gorm.DB, professor Professor) (err error) {
