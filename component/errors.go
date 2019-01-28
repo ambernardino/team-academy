@@ -18,4 +18,3 @@ func (err TeamAcademyError) Code() int {
 }
 
 var ErrSomethingAlreadyExists = &TeamAcademyError{http.StatusConflict, "Something is duplicated"}
-//var ErrStudentAlreadyExist = &TeamAcademyError
