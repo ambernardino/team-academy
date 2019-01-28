@@ -21,15 +21,15 @@ type Information struct {
 	SubjectName      string
 }
 
-func CreateTableIfNotExists(db *gorm.DB) (err error) {
+func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(StudentSubject{}) {
-		return db.CreateTable(StudentSubject{}).Error
+		return false, db.CreateTable(StudentSubject{}).Error
 	}
-	return
+	return true, nil
 }
 
 func AddStudentToSubject(db *gorm.DB, studentID, subjectID int) (err error) {
-	rows, err := db.Table("student").Select("student_subject.student_id, student_subject.subject_id").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: studentID}).Rows()
+	rows, err := db.Table("student").Select("student_subject.student_id, student_subject.subject_id").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Rows()
 
 	if rows.Next() {
 		err = component.ErrStudentAlreadyInSubject
