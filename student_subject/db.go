@@ -1,7 +1,6 @@
 package student_subject
 
 import (
-	"fmt"
 	"team-academy/component"
 
 	"github.com/jinzhu/gorm"
@@ -43,46 +42,12 @@ func RemoveStudentFromSubject(db *gorm.DB, studentID, subjectID int) (err error)
 	return db.Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Delete(&StudentSubject{}).Error
 }
 
-<<<<<<< HEAD
-func GetSubjectsFromStudentID(db *gorm.DB, id int) (subjects []StudentSubject, err error) {
-	err = db.Model(&StudentSubject{}).Find(&subjects).Where(&StudentSubject{SubjectID: id}).Error
-=======
 func GetSubjectsByStudentID(db *gorm.DB, id int) (subjects []StudentSubject, err error) {
 	err = db.Model(&StudentSubject{}).Where(&StudentSubject{StudentID: id}).Find(&subjects).Error
->>>>>>> origin/team-red-p
 	return
 }
 
 func GetStudentsBySubjectID(db *gorm.DB, id int) (students []StudentSubject, err error) {
-<<<<<<< HEAD
-	err = db.Model(&StudentSubject{}).Find(&students).Where(&StudentSubject{StudentID: id}).Error
-	return
-}
-
-func Delete(db *gorm.DB, id int) (err error) {
-	return db.Delete(&StudentSubject{ID: id}).Error
-}
-
-func IsStudentRegisteredInSubject(db *gorm.DB, studentID, subjectID int) (err error) {
-	var studentSubject StudentSubject
-	err = db.First(&studentSubject, &StudentSubject{StudentID: studentID, SubjectID: subjectID}).Error
-func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&infos).Error
-
-	for _, v := range infos {
-		fmt.Println(v)
-	}
-	return
-}
-
-func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&infos).Error
-
-	for _, v := range infos {
-		fmt.Println(v)
-	}
-=======
 	err = db.Model(&StudentSubject{}).Where(&StudentSubject{SubjectID: id}).Find(&students).Error
->>>>>>> origin/team-red-p
 	return
 }
