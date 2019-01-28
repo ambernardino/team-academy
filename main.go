@@ -47,12 +47,82 @@ func main() {
 	r.HandleFunc("/professor/delete/{ID}", DeleteProfessor).Methods("DELETE")
 	r.HandleFunc("/professor/update/{ID}", UpdateProfessor).Methods("PUT")
 	r.HandleFunc("/professor/create", PostProfessor).Methods("POST")
+	r.HandleFunc("/professor/givegrade", PostGrade).Methods("POST")
+	r.HandleFunc("/professor/update", PutGrade).Methods("PUT")
+	r.HandleFunc("/professor/get_by_subject/{ID}", GetGradeBySubject).Methods("PUT")
+	r.HandleFunc("/professor/get_by_student/{ID}", GetGradeByStudent).Methods("PUT")
 	err = GenerateSwaggerDocsAndEndpoints(r, "localhost"+":80")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	http.ListenAndServe(":80", r)
+}
+
+func PostGrade(w http.ResponseWriter, r *http.Request) {
+	var g grade.Grade
+	err := json.NewDecoder(r.Body).Decode(&g)
+	if err != nil {
+		return
+	}
+	err = grade.GiveGrade(app.Db, g)
+	if err != nil {
+		return
+	}
+	w.Write([]byte("Grade Added"))
+}
+
+func PutGrade (w http.ResponseWriter, r *http.Request) {
+	var g grade.Grade
+	err := json.NewDecoder(r.Body).Decode(&g)
+	if err != nil {
+		return
+	}
+	err = grade.UpdateGrade(app.Db, g)
+	if err != nil {
+		return
+	}
+	w.Write([]byte("Grade Updated"))	
+}
+
+func GetGradeByStudent(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	ID := vars["ID"]
+	id, err := strconv.Atoi(ID)
+	if err != nil {
+		return
+	}
+	g, err := grade.GetGradeByStudentID(app.Db, id)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	list, err := json.Marshal(g)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(list)
+}
+
+func GetGradeBySubject(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	ID := vars["ID"]
+	id, err := strconv.Atoi(ID)
+	if err != nil {
+		return
+	}
+	g, err := grade.GetGradeBySubjectID(app.Db, id)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	list, err := json.Marshal(g)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(list)
 }
 
 func UpdateProfessor(w http.ResponseWriter, r *http.Request) {
@@ -254,12 +324,12 @@ func populateDatabase(db *gorm.DB) (err error) {
 
 func GenerateSwaggerDocsAndEndpoints(router *mux.Router, endpoint string) (err error) {
 	config := summerfish.Config{
-		Schemes:          []string{"http", "https"},
-		SwaggerFileRoute: summerfish.SwaggerFileRoute,
-		SwaggerFilePath:  summerfish.SwaggerFileRoute,
-		SwaggerFileHeaderRoute : summerfish.SwaggerFileRoute,
-		SwaggerUIRoute:   summerfish.SwaggerUIRoute,
-		BaseRoute:        "/",
+		Schemes:                []string{"http", "https"},
+		SwaggerFileRoute:       summerfish.SwaggerFileRoute,
+		SwaggerFilePath:        summerfish.SwaggerFileRoute,
+		SwaggerFileHeaderRoute: summerfish.SwaggerFileRoute,
+		SwaggerUIRoute:         summerfish.SwaggerUIRoute,
+		BaseRoute:              "/",
 	}
 
 	config.SwaggerFilePath, err = filepath.Abs("res/swagger.json")

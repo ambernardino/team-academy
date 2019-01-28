@@ -8,9 +8,9 @@ import (
 )
 
 type Professor struct {
-	ID         int `gorm:"AUTO_INCREMENT"`
-	FirstName  string
-	LastName   string
+	ID         int    `gorm:"AUTO_INCREMENT"`
+	FirstName  string `json:"first_name,omitempty"`
+	LastName   string `json:"last_name,omitempty"`
 	CursoIDs   string
 	CadeiraIDS string
 	StartDate  time.Time

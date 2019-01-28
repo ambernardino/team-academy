@@ -37,10 +37,6 @@
   name = "github.com/mattn/go-sqlite3"
   version = "1.10.0"
 
-[prune]
-  go-tests = true
-  unused-packages = true
-
 [[constraint]]
   name = "github.com/plicca/summerfish-swagger"
   version = "1.0.0"

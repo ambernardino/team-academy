@@ -8,9 +8,9 @@ import (
 )
 
 type Grade struct {
-	SubjectID int
-	StudentID int
-	Rank      string
+	SubjectID int    `json:"subject_id,omitempty"`
+	StudentID int    `json:"student_id,omitempty"`
+	Rank      string `json:"rank,omitempty"`
 }
 
 type StudentGrade struct {
@@ -51,4 +51,16 @@ func GetStudentsGrades(db *gorm.DB) (grades []StudentGrade, err error) {
 	return
 }
 
+func GetGradeByStudentID(db *gorm.DB, ID int) (grades []Grade, err error) {
+	err = db.Model(&Grade{}).Where(&Grade{StudentID: ID}).Find(&grades).Error
+	return
+}
 
+func GetGradeBySubjectID(db *gorm.DB, ID int) (grades []Grade, err error) {
+	err = db.Model(&Grade{}).Where(&Grade{SubjectID: ID}).Find(&grades).Error
+	return
+}
+
+func UpdateGrade(db *gorm.DB, grade Grade) (err error) {
+    return db.Model(&Grade{}).Where(&Grade{StudentID: grade.StudentID, SubjectID: grade.SubjectID}).Update(grade).Error
+}
