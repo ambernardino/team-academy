@@ -44,12 +44,12 @@ func RemoveStudentFromSubject(db *gorm.DB, studentID, subjectID int) (err error)
 }
 
 func GetSubjectsByStudentID(db *gorm.DB, id int) (subjects []StudentSubject, err error) {
-	err = db.Model(&StudentSubject{}).Find(&subjects).Where(&StudentSubject{StudentID: id}).Error
+	err = db.Model(&StudentSubject{}).Where(&StudentSubject{StudentID: id}).Find(&subjects).Error
 	return
 }
 
 func GetStudentsBySubjectID(db *gorm.DB, id int) (students []StudentSubject, err error) {
-	err = db.Model(&StudentSubject{}).Find(&students).Where(&StudentSubject{SubjectID: id}).Error
+	err = db.Model(&StudentSubject{}).Where(&StudentSubject{SubjectID: id}).Find(&students).Error
 	return
 }
 
