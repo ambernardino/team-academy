@@ -1,4 +1,4 @@
-package grades
+package grade
 
 import (
 	"fmt"
