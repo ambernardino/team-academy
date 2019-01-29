@@ -1,353 +1,45 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
-	"path/filepath"
-	"strconv"
-	"strings"
+	"team-academy/component"
+	"team-academy/config"
 	"team-academy/grade"
 	"team-academy/professor"
-	"team-academy/student"
-	"team-academy/student_subject"
-	"team-academy/subject"
-	"time"
-
-	summerfish "github.com/plicca/summerfish-swagger"
 
 	"github.com/gorilla/mux"
 
-	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type App struct {
-	Db *gorm.DB
-}
-
-var app App
-
 func main() {
-	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
+	err := component.StartDB()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	db.SingularTable(true)
-	err = populateDatabase(db)
+
+	err = config.PopulateDatabase(component.App.DB)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	app = App{Db: db}
+
 	r := mux.NewRouter()
-	r.HandleFunc("/professor/{ID}", GetProfessor).Methods("GET")
-	r.HandleFunc("/professor/delete/{ID}", DeleteProfessor).Methods("DELETE")
-	r.HandleFunc("/professor/update/{ID}", UpdateProfessor).Methods("PUT")
-	r.HandleFunc("/professor/create", PostProfessor).Methods("POST")
-	r.HandleFunc("/professor/givegrade", PostGrade).Methods("POST")
-	r.HandleFunc("/professor/update", PutGrade).Methods("PUT")
-	r.HandleFunc("/professor/get_by_subject/{ID}", GetGradeBySubject).Methods("PUT")
-	r.HandleFunc("/professor/get_by_student/{ID}", GetGradeByStudent).Methods("PUT")
-	err = GenerateSwaggerDocsAndEndpoints(r, "localhost"+":80")
+	r.HandleFunc("/professor/{ID}", professor.GetProfessorController).Methods("GET")
+	r.HandleFunc("/professor/delete/{ID}", professor.DeleteProfessorController).Methods("DELETE")
+	r.HandleFunc("/professor/update/{ID}", professor.UpdateProfessorController).Methods("PUT")
+	r.HandleFunc("/professor/create", professor.PostProfessorController).Methods("POST")
+	r.HandleFunc("/professor/givegrade", grade.PostGradeController).Methods("POST")
+	r.HandleFunc("/professor/update", grade.PutGradeController).Methods("PUT")
+	r.HandleFunc("/professor/get_by_subject/{ID}", grade.GetGradeBySubjectController).Methods("PUT")
+	r.HandleFunc("/professor/get_by_student/{ID}", grade.GetGradeByStudentController).Methods("PUT")
+	err = config.GenerateSwaggerDocsAndEndpoints(r, "localhost"+":80")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	http.ListenAndServe(":80", r)
-}
 
-func PostGrade(w http.ResponseWriter, r *http.Request) {
-	var g grade.Grade
-	err := json.NewDecoder(r.Body).Decode(&g)
-	if err != nil {
-		return
-	}
-	err = grade.GiveGrade(app.Db, g)
-	if err != nil {
-		return
-	}
-	w.Write([]byte("Grade Added"))
-}
-
-func PutGrade (w http.ResponseWriter, r *http.Request) {
-	var g grade.Grade
-	err := json.NewDecoder(r.Body).Decode(&g)
-	if err != nil {
-		return
-	}
-	err = grade.UpdateGrade(app.Db, g)
-	if err != nil {
-		return
-	}
-	w.Write([]byte("Grade Updated"))	
-}
-
-func GetGradeByStudent(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ID := vars["ID"]
-	id, err := strconv.Atoi(ID)
-	if err != nil {
-		return
-	}
-	g, err := grade.GetGradeByStudentID(app.Db, id)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	list, err := json.Marshal(g)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Write(list)
-}
-
-func GetGradeBySubject(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ID := vars["ID"]
-	id, err := strconv.Atoi(ID)
-	if err != nil {
-		return
-	}
-	g, err := grade.GetGradeBySubjectID(app.Db, id)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	list, err := json.Marshal(g)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Write(list)
-}
-
-func UpdateProfessor(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ID := vars["ID"]
-	id, err := strconv.Atoi(ID)
-	if err != nil {
-		return
-	}
-	var prof professor.Professor
-	err = json.NewDecoder(r.Body).Decode(&prof)
-	if err != nil {
-		return
-	}
-	prof.ID = id
-	err = professor.UpdateProfessorInfo(app.Db, prof)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Write([]byte("Professor Updated"))
-}
-
-func PostProfessor(w http.ResponseWriter, r *http.Request) {
-	var prof professor.Professor
-	err := json.NewDecoder(r.Body).Decode(&prof)
-	if err != nil {
-		return
-	}
-	prof.StartDate = time.Now().UTC()
-	err = professor.CreateProfessor(app.Db, prof)
-	if err != nil {
-		return
-	}
-	w.Write([]byte("Professor Created"))
-}
-
-func GetProfessor(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ID := vars["ID"]
-	id, err := strconv.Atoi(ID)
-	if err != nil {
-		return
-	}
-	professor, err := professor.GetProfessorByID(app.Db, id)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	profInfo, err := json.Marshal(professor)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Write(profInfo)
-}
-
-func DeleteProfessor(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ID := vars["ID"]
-	id, err := strconv.Atoi(ID)
-	if err != nil {
-		return
-	}
-	err = professor.DeleteProfessor(app.Db, id)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Write([]byte("Professor Deleted"))
-}
-
-func sayHello(w http.ResponseWriter, r *http.Request) {
-	message := r.URL.Path
-	message = strings.TrimPrefix(message, "/")
-	message = "Hello Professor" + message
-	w.Write([]byte(message))
-}
-
-/* func main() {
-    http.HandleFunc("/", sayHello)
-    if err := http.ListenAndServe(":8080", nil); err != nil {
-        return
-    }
-} */
-
-func populateDatabase(db *gorm.DB) (err error) {
-	existsProfessorTable, err := professor.CreateTableIfNotExists(db)
-	if err != nil {
-		return
-	}
-
-	existsStudentTable, err := student.CreateTableIfNotExists(db)
-	if err != nil {
-		return
-	}
-
-	existsSubjectTable, err := subject.CreateTableIfNotExists(db)
-	if err != nil {
-		return
-	}
-
-	existsStudentSubjectTable, err := student_subject.CreateTableIfNotExists(db)
-	if err != nil {
-		return
-	}
-
-	existsGradeTable, err := grade.CreateTableIfNotExists(db)
-	if err != nil {
-		return
-	}
-
-	if !existsSubjectTable {
-		newSubject := subject.Subject{ID: 1, Name: "Cadeira 1", Description: "Nothing"}
-		err = subject.CreateSubject(db, newSubject)
-		if err != nil {
-			return
-		}
-
-		newSubject = subject.Subject{ID: 2, Name: "Cadeira 2", Description: "Nothing"}
-		err = subject.CreateSubject(db, newSubject)
-		if err != nil {
-			return
-		}
-
-		newSubject = subject.Subject{ID: 3, Name: "Cadeira 3", Description: "Nothing"}
-		err = subject.CreateSubject(db, newSubject)
-		if err != nil {
-			return
-		}
-	}
-
-	if !existsProfessorTable {
-		newProfessor := professor.Professor{ID: 1, FirstName: "Prof 1", LastName: "Prof 1", CursoIDs: "Curso 1", CadeiraIDS: "Cadeira 1", StartDate: time.Now().UTC()}
-		err = professor.CreateProfessor(db, newProfessor)
-		if err != nil {
-			return
-		}
-
-		newProfessor = professor.Professor{ID: 2, FirstName: "Prof 2", LastName: "Prof 2", CursoIDs: "Curso 2", CadeiraIDS: "Cadeira 2", StartDate: time.Now().UTC()}
-		err = professor.CreateProfessor(db, newProfessor)
-		if err != nil {
-			return
-		}
-
-		newProfessor = professor.Professor{ID: 3, FirstName: "Prof 3", LastName: "Prof 3", CursoIDs: "Curso 3", CadeiraIDS: "Cadeira 3", StartDate: time.Now().UTC()}
-		err = professor.CreateProfessor(db, newProfessor)
-		if err != nil {
-			return
-		}
-	}
-
-	if !existsStudentTable {
-		newStudent := student.Student{ID: 1, FirstName: "Student 1", LastName: "Student 1", CursoID: 1, StartDate: time.Now().UTC()}
-		err = student.CreateStudent(db, newStudent)
-		if err != nil {
-			return
-		}
-
-		newStudent = student.Student{ID: 2, FirstName: "Student 2", LastName: "Student 2", CursoID: 2, StartDate: time.Now().UTC()}
-		err = student.CreateStudent(db, newStudent)
-		if err != nil {
-			return
-		}
-
-		newStudent = student.Student{ID: 3, FirstName: "Student 3", LastName: "Student 3", CursoID: 3, StartDate: time.Now().UTC()}
-		err = student.CreateStudent(db, newStudent)
-		if err != nil {
-			return
-		}
-	}
-
-	if !existsStudentSubjectTable {
-		for i := 1; i <= 3; i++ {
-			for j := 1; j <= 3; j++ {
-				err = student_subject.AddStudentToSubject(db, i, j)
-				if err != nil {
-					return
-				}
-			}
-		}
-	}
-
-	if !existsGradeTable {
-		for i := 1; i <= 3; i++ {
-			for j := 1; j <= 3; j++ {
-				newGrade := grade.Grade{SubjectID: i, StudentID: j, Rank: "Failed"}
-				err = grade.GiveGrade(db, newGrade)
-				if err != nil {
-					return
-				}
-			}
-		}
-	}
-
-	return
-}
-
-func GenerateSwaggerDocsAndEndpoints(router *mux.Router, endpoint string) (err error) {
-	config := summerfish.Config{
-		Schemes:                []string{"http", "https"},
-		SwaggerFileRoute:       summerfish.SwaggerFileRoute,
-		SwaggerFilePath:        summerfish.SwaggerFileRoute,
-		SwaggerFileHeaderRoute: summerfish.SwaggerFileRoute,
-		SwaggerUIRoute:         summerfish.SwaggerUIRoute,
-		BaseRoute:              "/",
-	}
-
-	config.SwaggerFilePath, err = filepath.Abs("res/swagger.json")
-	if err != nil {
-		return
-	}
-
-	routerInformation, err := summerfish.GetInfoFromRouter(router)
-	if err != nil {
-		return
-	}
-
-	scheme := summerfish.SchemeHolder{Schemes: config.Schemes, Host: endpoint, BasePath: config.BaseRoute}
-	err = scheme.GenerateSwaggerFile(routerInformation, config.SwaggerFilePath)
-	if err != nil {
-		return
-	}
-
-	log.Println("Swagger documentation generated")
-	return summerfish.AddSwaggerUIEndpoints(router, config)
+	http.ListenAndServe(":8080", r)
 }
