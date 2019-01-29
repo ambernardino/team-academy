@@ -10,7 +10,7 @@ import (
 
 func Test_CreateSubject(t *testing.T) {
 	// Given
-	subject := Subject{ID: 1, Name: "PIIC", Description: "Cenas"}
+	subject := Subject{ID: 1, Name: "PIIC", Description: "StartDB"}
 	db, err := initializeDB()
 	if err != nil {
 		t.Error(err)
@@ -46,7 +46,7 @@ func Test_CreateSubject(t *testing.T) {
 
 func Test_CreateDuplicateSubject(t *testing.T) {
 	// Given
-	subject := Subject{ID: 58, Name: "PIIC", Description: "Cenas"}
+	subject := Subject{ID: 58, Name: "PIIC", Description: "StartDB"}
 	db, err := initializeDB()
 	if err != nil {
 		t.Error(err)
