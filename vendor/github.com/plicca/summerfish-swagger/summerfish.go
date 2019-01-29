@@ -3,11 +3,11 @@ package summerfish
 import (
 	"bufio"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"net/http"
 	"os"
+	"reflect"
 	"strings"
-
-	"github.com/gorilla/mux"
 )
 
 type Method map[string]Operation
@@ -184,7 +184,7 @@ func AddSwaggerUIEndpoints(router *mux.Router, config Config) (err error) {
 		return
 	}
 
-	basePath := os.Getenv("GOPATH") + "/pkg/dep/sources/https---github.com-plicca-summerfish--swagger"
+	basePath := os.Getenv("GOPATH") + "/src/" + reflect.TypeOf(config).PkgPath()
 	err = updateIndexFile(basePath, config.SwaggerFileHeaderRoute)
 	if err != nil {
 		return
