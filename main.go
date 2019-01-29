@@ -27,10 +27,12 @@ func main() {
 	}
 
 	r := mux.NewRouter()
+	//Professor Handlers
 	r.HandleFunc("/professor/{ID}", professor.GetProfessorController).Methods("GET")
 	r.HandleFunc("/professor/delete/{ID}", professor.DeleteProfessorController).Methods("DELETE")
 	r.HandleFunc("/professor/update/{ID}", professor.UpdateProfessorController).Methods("PUT")
 	r.HandleFunc("/professor/create", professor.PostProfessorController).Methods("POST")
+	//Grade Handlers
 	r.HandleFunc("/professor/givegrade", grade.PostGradeController).Methods("POST")
 	r.HandleFunc("/professor/update", grade.PutGradeController).Methods("PUT")
 	r.HandleFunc("/professor/get_by_subject/{ID}", grade.GetGradeBySubjectController).Methods("PUT")
