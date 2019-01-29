@@ -3,11 +3,12 @@ package student
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 	"team-academy/component"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func DeleteStudentController(w http.ResponseWriter, r *http.Request) {
@@ -51,6 +52,21 @@ func GetStudentController(w http.ResponseWriter, r *http.Request) {
 	w.Write(encodedStudent)
 }
 
+func GetAllStudentsController(w http.ResponseWriter, r *http.Request) {
+	students, err := GetAllStudents(component.App.DB)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	encodedStudents, err := json.Marshal(students)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(encodedStudents)
+}
+
 func UpdateStudentController(w http.ResponseWriter, r *http.Request) {
 	var encodedStudent Student
 
@@ -88,4 +104,3 @@ func CreateStudentController(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "%v", encodedStudent)
 }
-

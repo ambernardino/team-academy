@@ -18,7 +18,7 @@ func StartDB() (err error) {
 		return
 	}
 	db.SingularTable(true)
-	//err = populateDatabase(db)
+	
 	App = Application{DB: db}
 
 	return
