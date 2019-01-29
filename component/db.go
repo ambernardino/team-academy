@@ -2,6 +2,7 @@ package component
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -17,8 +18,9 @@ func StartDB() (err error) {
 		fmt.Println(err)
 		return
 	}
+
 	db.SingularTable(true)
-	//err = populateDatabase(db)
+
 	App = Application{DB: db}
 
 	return
