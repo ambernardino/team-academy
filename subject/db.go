@@ -14,7 +14,7 @@ type Subject struct {
 	Description string
 }
 
-func CreateTableIfNotExists(db *gorm.DB) (existss bool, err error) {
+func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(Subject{}) {
 		return false, db.CreateTable(Subject{}).Error
 	}

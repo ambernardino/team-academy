@@ -22,4 +22,5 @@ var ErrStudentAlreadyInSubject = &TeamAcademyError{http.StatusConflict, "Student
 var ErrProfessorDoesntExist = &TeamAcademyError{http.StatusConflict, "Professor not enroled in school"}
 var ErrProfessorIDIsInvalid = &TeamAcademyError{http.StatusConflict, "Professor has invalid ID number"}
 var ErrMissingParameters = &TeamAcademyError{http.StatusConflict, "Missing Parameters"}
+var ErrProfessorAlreadyInSubject = &TeamAcademyError{http.StatusConflict, "Professor is already registered in subject"}
 

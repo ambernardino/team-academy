@@ -7,6 +7,7 @@ import (
 	"team-academy/config"
 	"team-academy/grade"
 	"team-academy/professor"
+	"team-academy/professor_subject"
 
 	"github.com/gorilla/mux"
 
@@ -28,16 +29,21 @@ func main() {
 
 	r := mux.NewRouter()
 	//Professor Handlers
+	r.HandleFunc("/professor", professor.GetAllProfessorsController).Methods("GET")
 	r.HandleFunc("/professor/{ID}", professor.GetProfessorController).Methods("GET")
 	r.HandleFunc("/professor/delete/{ID}", professor.DeleteProfessorController).Methods("DELETE")
 	r.HandleFunc("/professor/update/{ID}", professor.UpdateProfessorController).Methods("PUT")
 	r.HandleFunc("/professor/create", professor.PostProfessorController).Methods("POST")
+	//Professor_Subject Handlers
+	r.HandleFunc("/professor/getclasses/{professorID}", professor_subject.GetSubjectsByProfessorIDController).Methods("GET")
+	r.HandleFunc("/subject/getprofessors/{subjectID}", professor_subject.GetProfessorsBySubjectIDController).Methods("GET")
 	//Grade Handlers
 	r.HandleFunc("/professor/givegrade", grade.PostGradeController).Methods("POST")
 	r.HandleFunc("/professor/update", grade.PutGradeController).Methods("PUT")
 	r.HandleFunc("/professor/get_by_subject/{ID}", grade.GetGradeBySubjectController).Methods("PUT")
 	r.HandleFunc("/professor/get_by_student/{ID}", grade.GetGradeByStudentController).Methods("PUT")
-	err = config.GenerateSwaggerDocsAndEndpoints(r, "localhost"+":80")
+
+	err = config.GenerateSwaggerDocsAndEndpoints(r, "localhost"+":8080")
 	if err != nil {
 		fmt.Println(err)
 		return

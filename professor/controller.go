@@ -79,3 +79,18 @@ func DeleteProfessorController(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write([]byte("Professor Deleted"))
 }
+
+func GetAllProfessorsController (w http.ResponseWriter, r *http.Request) {
+	professors, err := GetAllProfessors(component.App.DB)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	profsInfo, err := json.Marshal(professors)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(profsInfo)
+}

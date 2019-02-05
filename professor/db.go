@@ -8,12 +8,11 @@ import (
 )
 
 type Professor struct {
-	ID         int    `gorm:"AUTO_INCREMENT"`
-	FirstName  string `json:"first_name,omitempty"`
-	LastName   string `json:"last_name,omitempty"`
-	CursoIDs   string
-	CadeiraIDS string
-	StartDate  time.Time
+	ID        int    `gorm:"AUTO_INCREMENT"`
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
+	CursoID   int
+	StartDate time.Time
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
