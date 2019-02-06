@@ -1,3 +1,5 @@
 *.db
 .idea/
 .vscode/settings.json
+vendor/
+res/swagger.json

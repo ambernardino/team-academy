@@ -2,150 +2,79 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"team-academy/component"
+	"team-academy/config"
+	"team-academy/grade"
 	"team-academy/professor"
+	"team-academy/professor_subject"
 	"team-academy/student"
 	"team-academy/student_subject"
 	"team-academy/subject"
-	"time"
 
-	"github.com/jinzhu/gorm"
+	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	db, err := gorm.Open("sqlite3", "clip_holy_grail.db")
+	err := component.StartDB()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	err = professor.CreateTableIfNotExists(db)
+	err = config.PopulateDatabase(component.App.DB)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	err = student.CreateTableIfNotExists(db)
+	r := mux.NewRouter()
+
+	//student
+	r.HandleFunc("/student/{studentID}/", student.FetchStudentController).Methods("GET")
+	r.HandleFunc("/student/", student.FetchAllStudentsController).Methods("GET")
+	r.HandleFunc("/student/", student.UpdateStudentController).Methods("PUT")
+	r.HandleFunc("/student/", student.CreateStudentController).Methods("POST")
+	r.HandleFunc("/student/{studentID}/", student.DeleteStudentController).Methods("DELETE")
+
+	//student subject
+	r.HandleFunc("/student/{studentID}/subjects/", student_subject.FetchSubjectsByStudentIDController).Methods("GET")
+	r.HandleFunc("/student/{studentID}/info/", student_subject.FetchSubjectAndInfoByStudentIDController).Methods("GET")
+	r.HandleFunc("/subject/{subjectID}/students/", student_subject.FetchStudentsBySubjectIDController).Methods("GET")
+	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.AddStudentToSubjectController).Methods("POST")
+	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.RemoveStudentFromSubjectController).Methods("DELETE")
+
+	//professor
+	r.HandleFunc("/professor/", professor.FetchAllProfessorsController).Methods("GET")
+	r.HandleFunc("/professor/{ID}/", professor.FetchProfessorController).Methods("GET")
+	r.HandleFunc("/professor/", professor.CreateProfessorController).Methods("POST")
+	r.HandleFunc("/professor/", professor.UpdateProfessorController).Methods("PUT")
+	r.HandleFunc("/professor/{ID}/", professor.RemoveProfessorController).Methods("DELETE")
+
+	//subject
+	r.HandleFunc("/subject/{ID}/", subject.FetchSubjectByIDController).Methods("GET")
+	r.HandleFunc("/subject/", subject.FetchAllSubjectsController).Methods("GET")
+	r.HandleFunc("/subject/", subject.CreateSubjectController).Methods("POST")
+
+	//professor subject
+	r.HandleFunc("/professor/{ID}/subject/", professor_subject.FetchSubjectsByProfessorIDController).Methods("GET")
+	r.HandleFunc("/subject/{ID}/professor/", professor_subject.FetchProfessorsBySubjectIDController).Methods("GET")
+	r.HandleFunc("/professor/{professorID}/subject/{subjectID}/", professor_subject.CreateProfessorToSubjectController).Methods("POST")
+
+	//grade
+	r.HandleFunc("/grade/subject/{ID}", grade.FetchGradeBySubjectController).Methods("GET")
+	r.HandleFunc("/grade/student/{ID}", grade.FetchGradeByStudentController).Methods("GET")
+	r.HandleFunc("/grade/", grade.CreateGradeController).Methods("POST")
+	r.HandleFunc("/grade/", grade.UpdateGradeController).Methods("PUT")
+
+	err = config.GenerateSwaggerDocsAndEndpoints(r, "localhost:8080")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	err = subject.CreateTableIfNotExists(db)
-	if err != nil {
-		fmt.Println(err)
+	if err := http.ListenAndServe(":8080", r); err != nil {
 		return
 	}
-
-	err = student_subject.CreateTableIfNotExists(db)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = professor.CreateProfessor(db)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	newStudent := student.Student{FirstName: "Pedro", LastName: "Oliveira", CursoID: 1, StartDate: time.Now()}
-	err = student.CreateStudent(db, newStudent)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	newSubject := subject.Subject{ID: 2, Name: "Eletrónica 1", Description: "Uma seca desgraçada"}
-	err = subject.CreateSubject(db, newSubject)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = student_subject.AddStudentToSubject(db, 1, 1)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	newProfessor := professor.Professor{ID: 10, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now()}
-	err = professor.UpdateProfessorInfo(db, newProfessor)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	s := student.Student{ID: 1, FirstName: "Ricardo", LastName: "Cenas", CursoID: 1, StartDate: time.Now()}
-	err = student.UpdateStudent(db, s)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	updatedSubject := subject.Subject{ID: 2, Name: "Eletrónica 2", Description: "Outra seca desgraçada"}
-	err = subject.UpdateSubjectInfo(db, updatedSubject)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = professor.DeleteProfessor(db, 1)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = student.DeleteStudent(db, 3)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = subject.DeleteSubject(db, 8)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = student_subject.RemoveStudentFromSubject(db, 1, 1)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	professors, err := professor.GetAllProfessors(db)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(professors)
-
-	students, err := student.GetAllStudents(db)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(students)
-
-	subjects, err := subject.GetAllSubjects(db)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(subjects)
-
-	studentSubject, err := student_subject.GetSubjectsByStudentID(db, 1)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(studentSubject)
-
-	studentSubject, err = student_subject.GetSubjectsByStudentID(db, 1)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(studentSubject)
 }
