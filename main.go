@@ -27,17 +27,17 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/student/{studentID}", student.GetStudentController).Methods("GET")
-	r.HandleFunc("/students", student.GetAllStudentsController).Methods("GET")
-	r.HandleFunc("/student/update", student.UpdateStudentController).Methods("PUT")
-	r.HandleFunc("/student/create", student.CreateStudentController).Methods("POST")
-	r.HandleFunc("/student/delete/{studentID}", student.DeleteStudentController).Methods("DELETE")
+	r.HandleFunc("/student/{studentID}/", student.FetchStudentController).Methods("GET")
+	r.HandleFunc("/student/", student.FetchAllStudentsController).Methods("GET")
+	r.HandleFunc("/student/", student.UpdateStudentController).Methods("PUT")
+	r.HandleFunc("/student/", student.CreateStudentController).Methods("POST")
+	r.HandleFunc("/student/{studentID}/", student.DeleteStudentController).Methods("DELETE")
 
-	r.HandleFunc("/student/{studentID}/subjects", student_subject.GetSubjectsByStudentIDController).Methods("GET")
-	r.HandleFunc("/student/{studentID}/info", student_subject.GetSubjectAndInfoByStudentIDController).Methods("GET")
-	r.HandleFunc("/subject/{subjectID}/students", student_subject.GetStudentsBySubjectIDController).Methods("GET")
-	r.HandleFunc("/subject/{subjectID}/student/{studentID}", student_subject.AddStudentToSubjectController).Methods("POST")
-	r.HandleFunc("/subject/{subjectID}/remove/{studentID}", student_subject.RemoveStudentFromSubjectController).Methods("DELETE")
+	r.HandleFunc("/student/{studentID}/subjects/", student_subject.FetchSubjectsByStudentIDController).Methods("GET")
+	r.HandleFunc("/student/{studentID}/info/", student_subject.FetchSubjectAndInfoByStudentIDController).Methods("GET")
+	r.HandleFunc("/subject/{subjectID}/students/", student_subject.FetchStudentsBySubjectIDController).Methods("GET")
+	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.AddStudentToSubjectController).Methods("POST")
+	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.RemoveStudentFromSubjectController).Methods("DELETE")
 
 	err = config.GenerateSwaggerDocsAndEndpoints(r, "localhost:8080")
 	if err != nil {

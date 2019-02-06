@@ -28,7 +28,7 @@ func DeleteStudentController(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetStudentController(w http.ResponseWriter, r *http.Request) {
+func FetchStudentController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	studentID := vars["studentID"]
 
@@ -52,7 +52,7 @@ func GetStudentController(w http.ResponseWriter, r *http.Request) {
 	w.Write(encodedStudent)
 }
 
-func GetAllStudentsController(w http.ResponseWriter, r *http.Request) {
+func FetchAllStudentsController(w http.ResponseWriter, r *http.Request) {
 	students, err := GetAllStudents(component.App.DB)
 	if err != nil {
 		w.Write([]byte(err.Error()))
@@ -68,21 +68,28 @@ func GetAllStudentsController(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateStudentController(w http.ResponseWriter, r *http.Request) {
-	var encodedStudent Student
+	var decodedStudent Student
 
-	err := json.NewDecoder(r.Body).Decode(&encodedStudent)
+	err := json.NewDecoder(r.Body).Decode(&decodedStudent)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	err = UpdateStudent(component.App.DB, encodedStudent)
+	fmt.Println(decodedStudent)
+
+	err = UpdateStudent(component.App.DB, decodedStudent)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	fmt.Fprintf(w, "%v", encodedStudent)
+	encodedStudent, err := json.Marshal(decodedStudent)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(encodedStudent)
 }
 
 func CreateStudentController(w http.ResponseWriter, r *http.Request) {
@@ -101,6 +108,4 @@ func CreateStudentController(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-
-	fmt.Fprintf(w, "%v", encodedStudent)
 }

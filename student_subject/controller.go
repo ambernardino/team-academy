@@ -8,7 +8,7 @@ import (
 	"team-academy/component"
 )
 
-func GetSubjectsByStudentIDController(w http.ResponseWriter, r *http.Request) {
+func FetchSubjectsByStudentIDController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	studentID := vars["studentID"]
 
@@ -32,7 +32,7 @@ func GetSubjectsByStudentIDController(w http.ResponseWriter, r *http.Request) {
 	w.Write(encodedSubjects)
 }
 
-func GetStudentsBySubjectIDController(w http.ResponseWriter, r *http.Request) {
+func FetchStudentsBySubjectIDController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	subjectID := vars["subjectID"]
 
@@ -56,7 +56,7 @@ func GetStudentsBySubjectIDController(w http.ResponseWriter, r *http.Request) {
 	w.Write(encodedStudents)
 }
 
-func GetSubjectAndInfoByStudentIDController(w http.ResponseWriter, r *http.Request) {
+func FetchSubjectAndInfoByStudentIDController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	studentID := vars["studentID"]
 
