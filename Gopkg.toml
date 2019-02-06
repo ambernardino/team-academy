@@ -39,4 +39,8 @@
 
 [[constraint]]
   name = "github.com/plicca/summerfish-swagger"
+<<<<<<< HEAD
   version = "1.2"
+=======
+  version = "1.0.0"
+>>>>>>> team-red-s

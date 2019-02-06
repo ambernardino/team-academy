@@ -8,9 +8,9 @@ import (
 )
 
 type Grade struct {
-	SubjectID int
-	StudentID int
-	Rank      string
+	SubjectID int    `json:"subject_id,omitempty"`
+	StudentID int    `json:"student_id,omitempty"`
+	Rank      string `json:"rank,omitempty"`
 }
 
 type StudentGrade struct {
@@ -25,8 +25,22 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(Grade{}) {
 		return false, db.CreateTable(Grade{}).Error
 	}
-
 	return true, nil
+}
+
+func GiveGrade(db *gorm.DB, grade Grade) (err error) {
+
+	_, err = db.Table("student").Select("student.id, student_subject.subject_id").Joins("JOIN student_subject ON student_subject.student_id = student.id").Where(&student_subject.StudentSubject{SubjectID: grade.SubjectID}).Rows()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	return db.Save(&grade).Error
+}
+
+func GetGradeByStudentIDAndSubjectID(db *gorm.DB, studentID int, subjectID int) (grade Grade, err error) {
+	err = db.First(&grade, &Grade{StudentID: studentID, SubjectID: subjectID}).Error
+	return
 }
 
 func GetStudentsGrades(db *gorm.DB) (grades []StudentGrade, err error) {
@@ -34,23 +48,6 @@ func GetStudentsGrades(db *gorm.DB) (grades []StudentGrade, err error) {
 	for _, v := range grades {
 		fmt.Println(v)
 	}
-
-	return
-}
-
-func GiveGrade(db *gorm.DB, grade Grade) (err error) {
-	_, err = db.Table("student").Select("student.id, student_subject.subject_id").Joins("JOIN student_subject ON student_subject.student_id = student.id").Where(&student_subject.StudentSubject{SubjectID: grade.SubjectID}).Rows()
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	return db.Save(&grade).Error
-}
-
-func GetGradeByStudentIDAndSubjectID(db *gorm.DB, studentID int, subjectID int) (grade Grade, err error) {
-	err = db.First(&grade, &Grade{StudentID: studentID, SubjectID: subjectID}).Error
 	return
 }
 

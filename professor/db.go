@@ -8,12 +8,11 @@ import (
 )
 
 type Professor struct {
-	ID         int    `gorm:"AUTO_INCREMENT"`
-	FirstName  string `json:"first_name,omitempty"`
-	LastName   string `json:"last_name,omitempty"`
-	CursoIDs   string
-	CadeiraIDS string
-	StartDate  time.Time
+	ID        int    `gorm:"AUTO_INCREMENT"`
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
+	CursoID   int
+	StartDate time.Time
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
@@ -33,24 +32,20 @@ func GetAllProfessors(db *gorm.DB) (professors []Professor, err error) {
 }
 
 func UpdateProfessorInfo(db *gorm.DB, professor Professor) (err error) {
-	if professor.ID <= 0 {
-		err = component.ErrMissingParameters
-		return
-	}
-
 	_, err = GetProfessorByID(db, professor.ID)
 	if err != nil {
-		return
+		return component.ErrProfessorDoesntExist
+	} else if professor.ID <= 0 {
+		return component.ErrMissingParameters
 	}
-
-	return db.Model(&Professor{}).Update(professor).Error
+	return db.Model(&Professor{}).Updates(&professor).Error
 }
 
 func DeleteProfessor(db *gorm.DB, id int) (err error) {
 	return db.Delete(&Professor{ID: id}).Error
 }
 
-func GetProfessorByID(db *gorm.DB, id int) (professor Professor, err error) {
-	err = db.Model(&Professor{}).Where(&Professor{ID: id}).Find(&professor).Error
+func GetProfessorByID(db *gorm.DB, id int) (prof Professor, err error) {
+	err = db.Model(&Professor{}).Where(&Professor{ID: id}).Find(&prof).Error
 	return
 }

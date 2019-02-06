@@ -24,6 +24,11 @@ func CreateSubject(db *gorm.DB, newSubject Subject) (err error) {
 	if err != nil {
 		return db.Save(&newSubject).Error
 	}
+	_, err = GetSubjectByName(db, newSubject.Name)
+	if err != nil {
+		return db.Save(&newSubject).Error
+	}
+
 	err = component.ErrSomethingAlreadyExists
 	return
 }
@@ -38,6 +43,11 @@ func UpdateSubjectInfo(db *gorm.DB, subject Subject) (err error) {
 
 func GetSubjectByID(db *gorm.DB, id int) (subject Subject, err error) {
 	err = db.First(&subject, &Subject{ID: id}).Error
+	return
+}
+
+func GetSubjectByName(db *gorm.DB, name string) (subject Subject, err error) {
+	err = db.First(&subject, &Subject{Name: name}).Error
 	return
 }
 

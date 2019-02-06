@@ -14,11 +14,11 @@ type StudentSubject struct {
 }
 
 type Information struct {
-	StudentID        int
-	StudentFirstName string
-	StudentLastName  string
-	SubjectID        int
-	SubjectName      string
+	StudentID        int    `gorm:"column:id"`
+	StudentFirstName string `gorm:"column:first_name"`
+	StudentLastName  string `gorm:"column:last_name"`
+	SubjectID        int    `gorm:"column:id"`
+	SubjectName      string `gorm:"column:name"`
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {

@@ -8,97 +8,77 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func Test_CreateProfessor(t *testing.T) {
+func Test_CreateProfessors(t *testing.T) {
 	// Given
-	professor := Professor{ID: 54, FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
+	prof := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
 	db, err := initializeDB()
 	if err != nil {
 		t.Error(err)
 		return
 	}
-
 	// Perform
-	err = CreateProfessor(db, professor)
+	err = CreateProfessor(db, prof)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	testProfessor, err := GetProfessorByID(db, professor.ID)
-	if err != nil {
-		t.Error(err)
+	prof2, err := GetProfessorByID(db, prof.ID)
+	if prof == prof2 {
 		return
 	}
-
-	// Assert
-	if professor != testProfessor {
-		t.Errorf("Expected: %v Got: %v.", professor, testProfessor)
-		return
-	}
-	return
+	t.Errorf("Expected: %v Got: %v", prof, prof2)
 }
 
 func Test_UpdateProfessorInfo(t *testing.T) {
-	// Given
-	professor := Professor{ID: 1, FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
+	prof := Professor{ID: 6, FirstName: "Pinto", LastName: "Pimentão", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
+	profUpdated := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
 	db, err := initializeDB()
 	if err != nil {
 		t.Error(err)
 		return
 	}
-
-	// Perform
-	err = CreateProfessor(db, professor)
+	err = CreateProfessor(db, prof)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	professor = Professor{ID: 1, FirstName: "Mário", LastName: "Ventim", CursoIDs: "MIEEC", CadeiraIDS: "ET", StartDate: time.Now().UTC()}
-	err = UpdateProfessorInfo(db, professor)
+	err = UpdateProfessorInfo(db, profUpdated)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	testProfessor, err := GetProfessorByID(db, professor.ID)
+	GetProf, err := GetProfessorByID(db, profUpdated.ID)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-
-	// Assert
-	if professor != testProfessor {
-		t.Errorf("Expected: %v Got: %v.", professor, testProfessor)
+	if GetProf == profUpdated {
 		return
 	}
-	return
+	t.Fatalf("Expected: %v Got: %v", profUpdated, GetProf)
 }
 
-func Test_DeleteProfessor(t *testing.T) {
-	// Given
-	professor := Professor{ID: 1, FirstName: "Paulo", LastName: "Pinto", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
+func Test_RemoveProfessor(t *testing.T) {
+	prof := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
 	db, err := initializeDB()
 	if err != nil {
 		t.Error(err)
 		return
 	}
-
-	// Perform
-	err = CreateProfessor(db, professor)
+	err = CreateProfessor(db, prof)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	err = DeleteProfessor(db, professor.ID)
+	err = DeleteProfessor(db, prof.ID)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-
-	// Assert
-	testProfessor, err := GetProfessorByID(db, professor.ID)
-	if err != nil {
-		return
+	getprof, err := GetProfessorByID(db, prof.ID)
+	if err == nil {
+		t.Fatalf("Expected %v Got: %v", getprof, prof)
 	}
-	t.Errorf("Expected: %v Got: %v.", err, testProfessor)
 	return
 }
 
