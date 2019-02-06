@@ -8,7 +8,7 @@ import (
 	"team-academy/component"
 )
 
-func PostGradeController(w http.ResponseWriter, r *http.Request) {
+func CreateGradeController(w http.ResponseWriter, r *http.Request) {
 	var g Grade
 	err := json.NewDecoder(r.Body).Decode(&g)
 	if err != nil {
@@ -21,7 +21,7 @@ func PostGradeController(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Grade Added"))
 }
 
-func PutGradeController(w http.ResponseWriter, r *http.Request) {
+func UpdateGradeController(w http.ResponseWriter, r *http.Request) {
 	var g Grade
 	err := json.NewDecoder(r.Body).Decode(&g)
 	if err != nil {
@@ -34,7 +34,7 @@ func PutGradeController(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Grade Updated"))
 }
 
-func GetGradeByStudentController(w http.ResponseWriter, r *http.Request) {
+func FetchGradeByStudentController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	ID := vars["ID"]
 	id, err := strconv.Atoi(ID)
@@ -54,7 +54,7 @@ func GetGradeByStudentController(w http.ResponseWriter, r *http.Request) {
 	w.Write(list)
 }
 
-func GetGradeBySubjectController(w http.ResponseWriter, r *http.Request) {
+func FetchGradeBySubjectController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	ID := vars["ID"]
 	id, err := strconv.Atoi(ID)

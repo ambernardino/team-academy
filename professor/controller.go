@@ -2,14 +2,15 @@ package professor
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 	"team-academy/component"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
-func GetProfessorController(w http.ResponseWriter, r *http.Request) {
+func FetchProfessorController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	ID := vars["ID"]
 	id, err := strconv.Atoi(ID)
@@ -31,18 +32,11 @@ func GetProfessorController(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateProfessorController(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ID := vars["ID"]
-	id, err := strconv.Atoi(ID)
-	if err != nil {
-		return
-	}
 	var prof Professor
-	err = json.NewDecoder(r.Body).Decode(&prof)
+	err := json.NewDecoder(r.Body).Decode(&prof)
 	if err != nil {
 		return
 	}
-	prof.ID = id
 	err = UpdateProfessorInfo(component.App.DB, prof)
 	if err != nil {
 		w.Write([]byte(err.Error()))
@@ -51,7 +45,7 @@ func UpdateProfessorController(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Professor Updated"))
 }
 
-func PostProfessorController(w http.ResponseWriter, r *http.Request) {
+func CreateProfessorController(w http.ResponseWriter, r *http.Request) {
 	var prof Professor
 	err := json.NewDecoder(r.Body).Decode(&prof)
 	if err != nil {
@@ -65,7 +59,7 @@ func PostProfessorController(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Professor Created"))
 }
 
-func DeleteProfessorController(w http.ResponseWriter, r *http.Request) {
+func RemoveProfessorController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	ID := vars["ID"]
 	id, err := strconv.Atoi(ID)
@@ -80,7 +74,7 @@ func DeleteProfessorController(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Professor Deleted"))
 }
 
-func GetAllProfessorsController (w http.ResponseWriter, r *http.Request) {
+func FetchAllProfessorsController(w http.ResponseWriter, r *http.Request) {
 	professors, err := GetAllProfessors(component.App.DB)
 	if err != nil {
 		w.Write([]byte(err.Error()))
