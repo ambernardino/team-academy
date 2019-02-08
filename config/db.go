@@ -64,19 +64,19 @@ func PopulateDatabase(db *gorm.DB) (err error) {
     }
 
     if !existsProfessorTable {
-        newProfessor := professor.Professor{ID: 1, FirstName: "Prof 1", LastName: "Prof 1", CursoID: 1, StartDate: time.Now().UTC()}
+        newProfessor := professor.Professor{ID: 1, FirstName: "Prof 1", LastName: "Prof 1", CursoID: 1, StartDate: time.Now().UTC().Unix()}
         err = professor.CreateProfessor(db, newProfessor)
         if err != nil {
             return
         }
 
-        newProfessor = professor.Professor{ID: 2, FirstName: "Prof 2", LastName: "Prof 2", CursoID: 2, StartDate: time.Now().UTC()}
+        newProfessor = professor.Professor{ID: 2, FirstName: "Prof 2", LastName: "Prof 2", CursoID: 2, StartDate: time.Now().UTC().Unix()}
         err = professor.CreateProfessor(db, newProfessor)
         if err != nil {
             return
         }
 
-        newProfessor = professor.Professor{ID: 3, FirstName: "Prof 3", LastName: "Prof 3", CursoID: 3, StartDate: time.Now().UTC()}
+        newProfessor = professor.Professor{ID: 3, FirstName: "Prof 3", LastName: "Prof 3", CursoID: 3, StartDate: time.Now().UTC().Unix()}
         err = professor.CreateProfessor(db, newProfessor)
         if err != nil {
             return
@@ -84,19 +84,19 @@ func PopulateDatabase(db *gorm.DB) (err error) {
     }
 
     if !existsStudentTable {
-        newStudent := student.Student{ID: 1, FirstName: "Student 1", LastName: "Student 1", CursoID: 1, StartDate: time.Now().UTC()}
+        newStudent := student.Student{ID: 1, FirstName: "Student 1", LastName: "Student 1", CursoID: 1, StartDate: time.Now().UTC().Unix()}
         err = student.CreateStudent(db, newStudent)
         if err != nil {
             return
         }
 
-        newStudent = student.Student{ID: 2, FirstName: "Student 2", LastName: "Student 2", CursoID: 2, StartDate: time.Now().UTC()}
+        newStudent = student.Student{ID: 2, FirstName: "Student 2", LastName: "Student 2", CursoID: 2, StartDate: time.Now().UTC().Unix()}
         err = student.CreateStudent(db, newStudent)
         if err != nil {
             return
         }
 
-        newStudent = student.Student{ID: 3, FirstName: "Student 3", LastName: "Student 3", CursoID: 3, StartDate: time.Now().UTC()}
+        newStudent = student.Student{ID: 3, FirstName: "Student 3", LastName: "Student 3", CursoID: 3, StartDate: time.Now().UTC().Unix()}
         err = student.CreateStudent(db, newStudent)
         if err != nil {
             return

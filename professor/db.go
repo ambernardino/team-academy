@@ -2,7 +2,6 @@ package professor
 
 import (
     "team-academy/component"
-    "time"
 
     "github.com/jinzhu/gorm"
 )
@@ -12,7 +11,7 @@ type Professor struct {
     FirstName string `json:"first_name,omitempty"`
     LastName  string `json:"last_name,omitempty"`
     CursoID   int
-    StartDate time.Time
+    StartDate int64
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {

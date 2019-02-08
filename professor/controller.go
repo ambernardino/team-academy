@@ -53,7 +53,7 @@ func CreateProfessorController(w http.ResponseWriter, r *http.Request) {
     if err != nil {
         return
     }
-    prof.StartDate = time.Now().UTC()
+    prof.StartDate = time.Now().UTC().Unix()
     err = CreateProfessor(component.App.DB, prof)
     if err != nil {
         return

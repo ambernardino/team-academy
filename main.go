@@ -63,8 +63,8 @@ func main() {
 	r.HandleFunc("/professor/{professorID}/subject/{subjectID}/", professor_subject.CreateProfessorToSubjectController).Methods("POST")
 
 	//grade
-	r.HandleFunc("/grade/subject/{ID}", grade.FetchGradeBySubjectController).Methods("GET")
-	r.HandleFunc("/grade/student/{ID}", grade.FetchGradeByStudentController).Methods("GET")
+	r.HandleFunc("/grade/subject/{ID}/", grade.FetchGradeBySubjectController).Methods("GET")
+	r.HandleFunc("/grade/student/{ID}/", grade.FetchGradeByStudentController).Methods("GET")
 	r.HandleFunc("/grade/", grade.CreateGradeController).Methods("POST")
 	r.HandleFunc("/grade/", grade.UpdateGradeController).Methods("PUT")
 

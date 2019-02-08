@@ -101,7 +101,7 @@ func CreateStudentController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	encodedStudent.StartDate = time.Now().UTC()
+	encodedStudent.StartDate = time.Now().UTC().Unix()
 
 	err = CreateStudent(component.App.DB, encodedStudent)
 	if err != nil {
