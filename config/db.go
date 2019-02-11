@@ -112,31 +112,31 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	}
 
 	if !existsProfessorTable {
-		newProfessor := professor.Professor{ID: 1, FirstName: "Ana", LastName: "Sá", CursoID: 1, StartDate: time.Now().UTC().Unix()}
+		newProfessor := professor.Professor{ID: 1, FirstName: "Ana", LastName: "Sá", CursoID: 1, StartDate: time.Now().UTC().Unix(), Email: "a.sa@campus.fct.unl.pt"}
 		err = professor.CreateProfessor(db, newProfessor)
 		if err != nil {
 			return
 		}
 
-		newProfessor = professor.Professor{ID: 2, FirstName: "António", LastName: "Paiva", CursoID: 2, StartDate: time.Now().UTC().Unix()}
+		newProfessor = professor.Professor{ID: 2, FirstName: "António", LastName: "Paiva", CursoID: 2, StartDate: time.Now().UTC().Unix(), Email: "a.paiva@campus.fct.unl.pt"}
 		err = professor.CreateProfessor(db, newProfessor)
 		if err != nil {
 			return
 		}
 
-		newProfessor = professor.Professor{ID: 3, FirstName: "Helena", LastName: "Fino", CursoID: 3, StartDate: time.Now().UTC().Unix()}
+		newProfessor = professor.Professor{ID: 3, FirstName: "Helena", LastName: "Fino", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "h.fino@campus.fct.unl.pt"}
 		err = professor.CreateProfessor(db, newProfessor)
 		if err != nil {
 			return
 		}
 
-		newProfessor = professor.Professor{ID: 4, FirstName: "Fernanda", LastName: "Barbosa", CursoID: 4, StartDate: time.Now().UTC().Unix()}
+		newProfessor = professor.Professor{ID: 4, FirstName: "Fernanda", LastName: "Barbosa", CursoID: 4, StartDate: time.Now().UTC().Unix(), Email: "f.barbosa@campus.fct.unl.pt"}
 		err = professor.CreateProfessor(db, newProfessor)
 		if err != nil {
 			return
 		}
 
-		newProfessor = professor.Professor{ID: 5, FirstName: "Ruy", LastName: "Costa", CursoID: 5, StartDate: time.Now().UTC().Unix()}
+		newProfessor = professor.Professor{ID: 5, FirstName: "Ruy", LastName: "Costa", CursoID: 5, StartDate: time.Now().UTC().Unix(), Email: "r.costa@campus.fct.unl.pt"}
 		err = professor.CreateProfessor(db, newProfessor)
 		if err != nil {
 			return
@@ -144,43 +144,43 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	}
 
 	if !existsStudentTable {
-		newStudent := student.Student{ID: 1, FirstName: "Francisco", LastName: "Peres", CursoID: 3, StartDate: time.Now().UTC().Unix()}
+		newStudent := student.Student{ID: 1, FirstName: "Francisco", LastName: "Peres", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "f.peres@campus.fct.unl.pt"}
 		err = student.CreateStudent(db, newStudent)
 		if err != nil {
 			return
 		}
 
-		newStudent = student.Student{ID: 2, FirstName: "Pedro", LastName: "Oliveira", CursoID: 3, StartDate: time.Now().UTC().Unix()}
+		newStudent = student.Student{ID: 2, FirstName: "Pedro", LastName: "Oliveira", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "p.oliveira@campus.fct.unl.pt"}
 		err = student.CreateStudent(db, newStudent)
 		if err != nil {
 			return
 		}
 
-		newStudent = student.Student{ID: 3, FirstName: "Shazia", LastName: "Sulemane", CursoID: 3, StartDate: time.Now().UTC().Unix()}
+		newStudent = student.Student{ID: 3, FirstName: "Shazia", LastName: "Sulemane", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "s.sulemane@campus.fct.unl.pt"}
 		err = student.CreateStudent(db, newStudent)
 		if err != nil {
 			return
 		}
 
-		newStudent = student.Student{ID: 4, FirstName: "Tiago", LastName: "Marques", CursoID: 3, StartDate: time.Now().UTC().Unix()}
+		newStudent = student.Student{ID: 4, FirstName: "Tiago", LastName: "Marques", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "t.marques@campus.fct.unl.pt"}
 		err = student.CreateStudent(db, newStudent)
 		if err != nil {
 			return
 		}
 
-		newStudent = student.Student{ID: 5, FirstName: "António", LastName: "Bernardino", CursoID: 4, StartDate: time.Now().UTC().Unix()}
+		newStudent = student.Student{ID: 5, FirstName: "António", LastName: "Bernardino", CursoID: 4, StartDate: time.Now().UTC().Unix(), Email: "a.bernardino@campus.fct.unl.pt"}
 		err = student.CreateStudent(db, newStudent)
 		if err != nil {
 			return
 		}
 
-		newStudent = student.Student{ID: 6, FirstName: "Pedro", LastName: "Grilo", CursoID: 4, StartDate: time.Now().UTC().Unix()}
+		newStudent = student.Student{ID: 6, FirstName: "Pedro", LastName: "Grilo", CursoID: 4, StartDate: time.Now().UTC().Unix(), Email: "p.grilo@campus.fct.unl.pt"}
 		err = student.CreateStudent(db, newStudent)
 		if err != nil {
 			return
 		}
 
-		newStudent = student.Student{ID: 7, FirstName: "Daniela", LastName: "Gonçalves", CursoID: 5, StartDate: time.Now().UTC().Unix()}
+		newStudent = student.Student{ID: 7, FirstName: "Daniela", LastName: "Gonçalves", CursoID: 5, StartDate: time.Now().UTC().Unix(), Email: "d.goncalves@campus.fct.unl.pt"}
 		err = student.CreateStudent(db, newStudent)
 		if err != nil {
 			return
