@@ -10,7 +10,7 @@ import (
 
 func Test_CreateProfessors(t *testing.T) {
     // Given
-    prof := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
+    prof := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "p.montezuma@campus.fct.unl.pt"}
     db, err := initializeDB()
     if err != nil {
         t.Error(err)
@@ -30,8 +30,8 @@ func Test_CreateProfessors(t *testing.T) {
 }
 
 func Test_UpdateProfessorInfo(t *testing.T) {
-    prof := Professor{ID: 6, FirstName: "Pinto", LastName: "Pimentão", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
-    profUpdated := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
+    prof := Professor{ID: 6, FirstName: "Pinto", LastName: "Pimentão", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "p.montezuma@campus.fct.unl.pt"}
+    profUpdated := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "p.montezuma@campus.fct.unl.pt"}
     db, err := initializeDB()
     if err != nil {
         t.Error(err)
@@ -59,7 +59,7 @@ func Test_UpdateProfessorInfo(t *testing.T) {
 }
 
 func Test_RemoveProfessor(t *testing.T) {
-    prof := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoIDs: "MIEEC", CadeiraIDS: "PM", StartDate: time.Now().UTC()}
+    prof := Professor{ID: 6, FirstName: "Paulo", LastName: "Montezuma", CursoID: 3, StartDate: time.Now().UTC().Unix(), Email: "p.montezuma@campus.fct.unl.pt"}
     db, err := initializeDB()
     if err != nil {
         t.Error(err)
