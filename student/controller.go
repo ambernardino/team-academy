@@ -2,7 +2,6 @@ package student
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"team-academy/component"
@@ -94,8 +93,6 @@ func UpdateStudentController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(decodedStudent)
-
 	err = UpdateStudent(component.App.DB, decodedStudent)
 	if err != nil {
 		w.Write([]byte(err.Error()))
@@ -111,17 +108,17 @@ func UpdateStudentController(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateStudentController(w http.ResponseWriter, r *http.Request) {
-	var encodedStudent Student
+	var decodedStudent Student
 
-	err := json.NewDecoder(r.Body).Decode(&encodedStudent)
+	err := json.NewDecoder(r.Body).Decode(&decodedStudent)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	encodedStudent.StartDate = time.Now().UTC().Unix()
+	decodedStudent.StartDate = time.Now().UTC().Unix()
 
-	err = CreateStudent(component.App.DB, encodedStudent)
+	err = CreateStudent(component.App.DB, decodedStudent)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
