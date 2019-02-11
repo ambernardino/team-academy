@@ -45,6 +45,7 @@ func main() {
 	r.HandleFunc("/subject/{subjectID}/students/", student_subject.FetchStudentsBySubjectIDController).Methods("GET")
 	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.AddStudentToSubjectController).Methods("POST")
 	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.RemoveStudentFromSubjectController).Methods("DELETE")
+	r.HandleFunc("/subject/{subjectID}/info/", student_subject.FetchStudentAndInfoBySubjectIDController).Methods("GET")
 
 	//professor
 	r.HandleFunc("/professor/", professor.FetchAllProfessorsController).Methods("GET")

@@ -53,6 +53,15 @@ func GetStudentsBySubjectID(db *gorm.DB, id int) (students []StudentSubject, err
 	return
 }
 
+func GetStudentAndInfoBySubjectID(db *gorm.DB, id int) (infos []Information, err error) {
+	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{SubjectID: id}).Scan(&infos).Error
+
+	for _, v := range infos {
+		fmt.Println(v)
+	}
+	return
+}
+
 func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
 	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&infos).Error
 

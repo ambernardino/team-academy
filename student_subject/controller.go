@@ -56,6 +56,30 @@ func FetchStudentsBySubjectIDController(w http.ResponseWriter, r *http.Request) 
 	w.Write(encodedStudents)
 }
 
+func FetchStudentAndInfoBySubjectIDController (w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	subjectID := vars["subjectID"]
+
+	ID, err := strconv.Atoi(subjectID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	info, err := GetStudentAndInfoBySubjectID(component.App.DB, ID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	encodedInfo, err := json.Marshal(info)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(encodedInfo)
+}
+
 func FetchSubjectAndInfoByStudentIDController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	studentID := vars["studentID"]
