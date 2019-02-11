@@ -35,7 +35,7 @@ func FetchAllSubjectsController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	component.ReturnResponse(w, newSubject)
+	component.ReturnResponse(w, subjects)
 }
 
 func FetchSubjectByIDController(w http.ResponseWriter, r *http.Request) {
@@ -52,5 +52,5 @@ func FetchSubjectByIDController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	component.ReturnResponse(w, newSubject)
+	component.ReturnResponse(w, subject)
 }
