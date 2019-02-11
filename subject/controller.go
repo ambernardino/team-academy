@@ -31,18 +31,11 @@ func CreateSubjectController(w http.ResponseWriter, r *http.Request) {
 
 func FetchAllSubjectsController(w http.ResponseWriter, r *http.Request) {
 	subjects, err := GetAllSubjects(component.App.DB)
-	if err != nil {
-		w.Write([]byte(err.Error()))
+	if component.ControllerError(w, err, nil) {
 		return
 	}
 
-	subjectsInfo, err := json.Marshal(subjects)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	w.Write(subjectsInfo)
+	component.ReturnResponse(w, newSubject)
 }
 
 func FetchSubjectByIDController(w http.ResponseWriter, r *http.Request) {
@@ -50,21 +43,14 @@ func FetchSubjectByIDController(w http.ResponseWriter, r *http.Request) {
 	id := vars["ID"]
 
 	subjectID, err := strconv.Atoi(id)
-	if err != nil {
+	if component.ControllerError(w, err, nil) {
 		return
 	}
 
 	subject, err := GetSubjectByID(component.App.DB, subjectID)
-	if err != nil {
-		w.Write([]byte(err.Error()))
+	if component.ControllerError(w, err, nil) {
 		return
 	}
 
-	subjectInfo, err := json.Marshal(subject)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	w.Write(subjectInfo)
+	component.ReturnResponse(w, newSubject)
 }
