@@ -52,6 +52,24 @@ func FetchStudentController(w http.ResponseWriter, r *http.Request) {
 	w.Write(encodedStudent)
 }
 
+func FetchStudentByEmailController(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	email := vars["email"]
+
+	student, err := GetStudentByEmail(component.App.DB, email)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	encodedStudent, err := json.Marshal(student)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(encodedStudent)
+}
+
 func FetchAllStudentsController(w http.ResponseWriter, r *http.Request) {
 	students, err := GetAllStudents(component.App.DB)
 	if err != nil {

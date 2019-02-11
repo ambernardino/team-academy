@@ -33,6 +33,7 @@ func main() {
 
 	//student
 	r.HandleFunc("/student/{studentID}/", student.FetchStudentController).Methods("GET")
+	r.HandleFunc("/student/{email}/", student.FetchStudentByEmailController).Methods("GET")
 	r.HandleFunc("/student/", student.FetchAllStudentsController).Methods("GET")
 	r.HandleFunc("/student/", student.UpdateStudentController).Methods("PUT")
 	r.HandleFunc("/student/", student.CreateStudentController).Methods("POST")
@@ -48,6 +49,7 @@ func main() {
 	//professor
 	r.HandleFunc("/professor/", professor.FetchAllProfessorsController).Methods("GET")
 	r.HandleFunc("/professor/{ID}/", professor.FetchProfessorController).Methods("GET")
+	r.HandleFunc("/professor/{email}/", professor.FetchProfessorByEmailController).Methods("GET")
 	r.HandleFunc("/professor/", professor.CreateProfessorController).Methods("POST")
 	r.HandleFunc("/professor/", professor.UpdateProfessorController).Methods("PUT")
 	r.HandleFunc("/professor/{ID}/", professor.RemoveProfessorController).Methods("DELETE")

@@ -12,6 +12,7 @@ type Student struct {
 	LastName  string `json:"last_name,omitempty"`
 	CursoID   int
 	StartDate int64
+	Email     string
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
@@ -45,6 +46,11 @@ func DeleteStudent(db *gorm.DB, id int) (err error) {
 
 func GetStudentByID(db *gorm.DB, id int) (student Student, err error) {
 	err = db.First(&student, &Student{ID: id}).Error
+	return
+}
+
+func GetStudentByEmail(db *gorm.DB, email string) (student Student, err error) {
+	err = db.First(&student, &Student{Email: email}).Error
 	return
 }
 
