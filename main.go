@@ -8,6 +8,8 @@ import (
 	"team-academy/grade"
 	"team-academy/professor"
 	"team-academy/professor_subject"
+	"team-academy/schedule"
+	"team-academy/shift"
 	"team-academy/student"
 	"team-academy/student_subject"
 	"team-academy/subject"
@@ -69,6 +71,18 @@ func main() {
 	r.HandleFunc("/grade/student/{ID}/", grade.FetchGradeByStudentController).Methods("GET")
 	r.HandleFunc("/grade/", grade.CreateGradeController).Methods("POST")
 	r.HandleFunc("/grade/", grade.UpdateGradeController).Methods("PUT")
+
+	//schedule
+	r.HandleFunc("/schedule/{ID}/", schedule.FetchScheduleController).Methods("GET")
+	r.HandleFunc("/schedule/", schedule.CreateScheduleController).Methods("POST")
+	r.HandleFunc("/schedule/", schedule.UpdateScheduleController).Methods("PUT")
+	r.HandleFunc("/schedule/", schedule.DeleteScheduleController).Methods("DELETE")
+
+	//shift
+	r.HandleFunc("/shift/{ID}/", shift.FetchShiftController).Methods("GET")
+	r.HandleFunc("/shift/", shift.CreateShiftController).Methods("POST")
+	r.HandleFunc("/shift/", shift.UpdateShiftController).Methods("PUT")
+	r.HandleFunc("/shift/", shift.DeleteShiftController).Methods("DELETE")
 
 	err = config.GenerateSwaggerDocsAndEndpoints(r, "localhost:8080")
 	if err != nil {
