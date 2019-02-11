@@ -10,7 +10,7 @@ import (
 )
 
 func Test_CreateStudent(t *testing.T) {
-	testStudent := Student{ID: 1, FirstName: "Maria", LastName: "Joaquina", CursoID: 1, StartDate: time.Now().UTC()}
+	testStudent := Student{ID: 1, FirstName: "Maria", LastName: "Joaquina", CursoID: 1, StartDate: time.Now().UTC().Unix()}
 	db, err := initializeDB()
 	if err != nil {
 		t.Error("DB is not initialized")
@@ -38,7 +38,7 @@ func Test_CreateStudent(t *testing.T) {
 }
 
 func Test_UpdateStudent(t *testing.T) {
-	testStudent := Student{ID: 1, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC()}
+	testStudent := Student{ID: 1, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC().Unix()}
 	db, err := initializeDB()
 	if err != nil {
 		t.Error("DB is not initialized")
@@ -51,7 +51,7 @@ func Test_UpdateStudent(t *testing.T) {
 		return
 	}
 
-	testStudent = Student{ID: 1, FirstName: "Eleutério", LastName: "Arnaldo", CursoID: 1, StartDate: time.Now().UTC()}
+	testStudent = Student{ID: 1, FirstName: "Eleutério", LastName: "Arnaldo", CursoID: 1, StartDate: time.Now().UTC().Unix()}
 	err = UpdateStudent(db, testStudent)
 	if err != nil {
 		t.Error("Couldn't update a student")
@@ -72,7 +72,7 @@ func Test_UpdateStudent(t *testing.T) {
 }
 
 func Test_DeleteStudent(t *testing.T) {
-	testStudent := Student{ID: 1, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC()}
+	testStudent := Student{ID: 1, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC().Unix()}
 	db, err := initializeDB()
 	if err != nil {
 		t.Error("DB is not initialized")
