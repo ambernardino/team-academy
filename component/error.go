@@ -17,6 +17,7 @@ var ErrProfessorDoesntExist = &TeamAcademyError{http.StatusConflict, "Professor 
 var ErrProfessorIDIsInvalid = &TeamAcademyError{http.StatusConflict, "Professor has invalid ID number"}
 var ErrMarshallingJSON = &TeamAcademyError{http.StatusBadRequest, "Unable to marshall parameters"}
 var ErrUnmarshallingJSON = &TeamAcademyError{http.StatusBadRequest, "Unable to unmarshall parameters"}
+var ErrStudentAlreadyInShift = &TeamAcademyError{http.StatusBadRequest, "Student already registered in shift"}
 
 //Error returns the user-readable message
 func (err TeamAcademyError) Error() string {
