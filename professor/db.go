@@ -38,6 +38,7 @@ func UpdateProfessorInfo(db *gorm.DB, professor Professor) (err error) {
 	} else if professor.ID <= 0 {
 		return component.ErrMissingParameters
 	}
+
 	return db.Model(&Professor{}).Updates(&professor).Error
 }
 

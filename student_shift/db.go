@@ -1,6 +1,7 @@
 package student_shift
 
 import (
+	"team-academy/component"
 	"team-academy/shift"
 
 	"github.com/jinzhu/gorm"
@@ -20,11 +21,17 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	return true, nil
 }
 
-func AddProfessorToSubjectShift(db *gorm.DB, studentID, subjectID, shiftID int) (err error) {
-	return db.Save(&StudentShift{StudentID: studentID, SubjectID: subjectID, ShiftID: shiftID}).Error
+func AddStudentToShift(db *gorm.DB, studentID int, shiftID int) (err error) {
+	rows, err := db.Table("student_shift").Select("student_shift.shift_id, student_shift.student_id").Joins("JOIN shift ON student_shift.shift_id = shift.id").Joins("JOIN student ON student_shift.student_id = student.id").Where(&StudentShift{ShiftID: shiftID, StudentID: studentID}).Rows()
+	if rows.Next() {
+		err = component.ErrStudentAlreadyInShift
+		return
+	}
+
+	return db.Save(&StudentShift{StudentID: studentID, ShiftID: shiftID}).Error
 }
 
-func GetShiftsByProfessorID(db *gorm.DB, id int) (shifts []shift.Shift, err error) {
+func GetShiftsByStudentID(db *gorm.DB, id int) (shifts []shift.Shift, err error) {
 	err = db.Model(&StudentShift{}).Where(&StudentShift{StudentID: id}).Find(&shifts).Error
 	return
 }

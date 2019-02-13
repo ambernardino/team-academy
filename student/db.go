@@ -27,17 +27,14 @@ func CreateStudent(db *gorm.DB, student Student) (err error) {
 }
 
 func UpdateStudent(db *gorm.DB, student Student) (err error) {
-	if student.ID <= 0 {
-		err = component.ErrMissingParameters
-		return
-	}
-
 	_, err = GetStudentByID(db, student.ID)
 	if err != nil {
-		return
+		return component.ErrStudentDoesntExist
+	} else if student.ID <= 0 {
+		return component.ErrMissingParameters
 	}
 
-	return db.Model(&Student{}).Update(student).Error
+	return db.Model(&Student{}).Updates(&student).Error
 }
 
 func DeleteStudent(db *gorm.DB, id int) (err error) {

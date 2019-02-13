@@ -1,7 +1,6 @@
 package student
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -10,101 +9,193 @@ import (
 )
 
 func Test_CreateStudent(t *testing.T) {
-	testStudent := Student{ID: 1, FirstName: "Maria", LastName: "Joaquina", CursoID: 1, StartDate: time.Now().UTC().Unix()}
-	db, err := initializeDB()
+	// Given
+	db, err := StartDB()
 	if err != nil {
-		t.Error("DB is not initialized")
+		t.Error(err)
 		return
 	}
 
-	err = CreateStudent(db, testStudent)
+	newStudent := Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = CreateStudent(db, newStudent)
 	if err != nil {
-		t.Error("Couldn't create a new student")
+		t.Error(err)
 		return
 	}
 
-	testStudent2, err := GetStudentByID(db, testStudent.ID)
-	if err != nil {
-		t.Error("Couldn't get student by ID")
+	// Perform
+	testStudent, err := GetStudentByID(db, newStudent.ID)
+	if testStudent != newStudent {
+		t.Errorf("Expected %v, got %v", newStudent, testStudent)
 		return
 	}
 
-	if testStudent == testStudent2 {
+	err = DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
 		return
 	}
-	t.Errorf("Expected: %v Got: %v", testStudent, testStudent2)
+
 	return
-
 }
 
-func Test_UpdateStudent(t *testing.T) {
-	testStudent := Student{ID: 1, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC().Unix()}
-	db, err := initializeDB()
+func Test_UpdateStudentInfo(t *testing.T) {
+	// Given
+	db, err := StartDB()
 	if err != nil {
-		t.Error("DB is not initialized")
+		t.Error(err)
 		return
 	}
 
-	err = CreateStudent(db, testStudent)
+	newStudent := Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = CreateStudent(db, newStudent)
 	if err != nil {
-		t.Error("Couldn't create a new student")
+		t.Error(err)
 		return
 	}
 
-	testStudent = Student{ID: 1, FirstName: "Eleutério", LastName: "Arnaldo", CursoID: 1, StartDate: time.Now().UTC().Unix()}
-	err = UpdateStudent(db, testStudent)
+	// Perform
+	updatedStudent := Student{ID: 666, FirstName: "Updated", LastName: "Updated", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "u.updated_666@campus.fct.unl.pt"}
+	err = UpdateStudent(db, updatedStudent)
 	if err != nil {
-		t.Error("Couldn't update a student")
+		t.Error(err)
 		return
 	}
 
-	testStudent2, err := GetStudentByID(db, testStudent.ID)
+	fetchedStudent, err := GetStudentByID(db, newStudent.ID)
 	if err != nil {
-		t.Error("Couldn't get student by ID")
+		t.Error(err)
 		return
 	}
 
-	if testStudent == testStudent2 {
+	// Assert
+	if fetchedStudent != updatedStudent {
+		t.Errorf("Expected %v, got %v", updatedStudent, fetchedStudent)
 		return
 	}
-	t.Errorf("Expected: %v Got: %v", testStudent, testStudent2)
+
+	err = DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
 	return
 }
 
 func Test_DeleteStudent(t *testing.T) {
-	testStudent := Student{ID: 1, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC().Unix()}
-	db, err := initializeDB()
+	// Given
+	db, err := StartDB()
 	if err != nil {
-		t.Error("DB is not initialized")
+		t.Error(err)
 		return
 	}
 
-	err = CreateStudent(db, testStudent)
+	newStudent := Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = CreateStudent(db, newStudent)
 	if err != nil {
-		t.Error("Couldn't create a new student")
+		t.Error(err)
 		return
 	}
 
-	err = DeleteStudent(db, testStudent.ID)
+	// Perform
+	err = DeleteStudent(db, newStudent.ID)
 	if err != nil {
-		t.Error("Couldn't delete a student")
+		t.Error(err)
 		return
 	}
 
-	testStudent2, err := GetStudentByID(db, testStudent.ID)
-	if err != nil {
+	_, err = GetStudentByID(db, newStudent.ID)
+
+	// Assert
+	if err == nil {
+		t.Error("Student wasn't properly deleted.")
 		return
 	}
-	t.Errorf("Expected: %v , Got: %v", err, testStudent2)
+
 	return
 }
 
-func initializeDB() (DB *gorm.DB, err error) {
-	DB, err = gorm.Open("sqlite3", "../clip_holy_grail.db")
+func Test_GetStudentByID(t *testing.T) {
+	// Given
+	db, err := StartDB()
 	if err != nil {
-		fmt.Println(err)
+		t.Error(err)
 		return
 	}
-	DB.SingularTable(true)
+
+	newStudent := Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = CreateStudent(db, newStudent)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Perform
+	fetchedStudent, err := GetStudentByID(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Assert
+	if fetchedStudent != newStudent {
+		t.Errorf("Expected %v, got %v", newStudent, fetchedStudent)
+		return
+	}
+
+	err = DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	return
+}
+
+func Test_GetStudentByEmail(t *testing.T) {
+	// Given
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newStudent := Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = CreateStudent(db, newStudent)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Perform
+	fetchedStudent, err := GetStudentByEmail(db, newStudent.Email)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Assert
+	if fetchedStudent != newStudent {
+		t.Errorf("Expected %v, got %v", newStudent, fetchedStudent)
+		return
+	}
+
+	err = DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	return
+}
+
+func StartDB() (db *gorm.DB, err error) {
+	db, err = gorm.Open("sqlite3", "../clip_holy_grail.db")
+	if err != nil {
+		return
+	}
+
+	db.SingularTable(true)
 	return
 }
