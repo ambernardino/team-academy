@@ -2,10 +2,11 @@ package student_subject
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 	"team-academy/component"
+
+	"github.com/gorilla/mux"
 )
 
 func FetchSubjectsByStudentIDController(w http.ResponseWriter, r *http.Request) {
@@ -53,10 +54,11 @@ func FetchStudentsBySubjectIDController(w http.ResponseWriter, r *http.Request) 
 		w.Write([]byte(err.Error()))
 		return
 	}
+
 	w.Write(encodedStudents)
 }
 
-func FetchStudentAndInfoBySubjectIDController (w http.ResponseWriter, r *http.Request) {
+func FetchStudentAndInfoBySubjectIDController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	subjectID := vars["subjectID"]
 

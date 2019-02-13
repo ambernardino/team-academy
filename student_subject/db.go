@@ -2,6 +2,8 @@ package student_subject
 
 import (
 	"team-academy/component"
+	"team-academy/student"
+	"team-academy/subject"
 
 	"github.com/jinzhu/gorm"
 )
@@ -28,8 +30,22 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func AddStudentToSubject(db *gorm.DB, studentID, subjectID int) (err error) {
-	rows, err := db.Table("student").Select("student_subject.student_id, student_subject.subject_id").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Rows()
+	_, err = student.GetStudentByID(db, studentID)
+	if err != nil {
+		return
+	}
 
+	_, err = subject.GetSubjectByID(db, subjectID)
+	if err != nil {
+		return
+	}
+
+	rows, err := db.Table("student_subject").Select("student_subject.student_id, student_subject.subject_id, student.first_name, student.last_name, subject.name").Joins("JOIN student ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Rows()
+	if err != nil {
+		return
+	}
+
+	defer rows.Close()
 	if rows.Next() {
 		err = component.ErrStudentAlreadyInSubject
 		return
@@ -42,6 +58,11 @@ func RemoveStudentFromSubject(db *gorm.DB, studentID, subjectID int) (err error)
 	return db.Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Delete(&StudentSubject{}).Error
 }
 
+func GetStudentSubject(db *gorm.DB, studentID, subjectID int) (studentSubject StudentSubject, err error) {
+	err = db.First(&studentSubject, &StudentSubject{StudentID: studentID, SubjectID: subjectID}).Error
+	return
+}
+
 func GetSubjectsByStudentID(db *gorm.DB, id int) (subjects []StudentSubject, err error) {
 	err = db.Model(&StudentSubject{}).Where(&StudentSubject{StudentID: id}).Find(&subjects).Error
 	return
@@ -52,12 +73,12 @@ func GetStudentsBySubjectID(db *gorm.DB, id int) (students []StudentSubject, err
 	return
 }
 
-func GetStudentAndInfoBySubjectID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{SubjectID: id}).Scan(&infos).Error
+func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
+	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&infos).Error
 	return
 }
 
-func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&infos).Error
+func GetStudentAndInfoBySubjectID(db *gorm.DB, id int) (infos []Information, err error) {
+	err = db.Table("student_subject").Select("student_subject.student_id, student_subject.subject_id, student.first_name, student.last_name, subject.name").Joins("JOIN student ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{SubjectID: id}).Scan(&infos).Error
 	return
 }

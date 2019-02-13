@@ -12,179 +12,372 @@ import (
 )
 
 func Test_AddStudentToSubject(t *testing.T) {
-	testStudent := student.Student{ID: 7, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC()}
-	testSubject := subject.Subject{ID: 9, Name: "Análise Matemática 4", Description: "Easy"}
-
-	db, err := initializeDB()
+	// Given
+	db, err := StartDB()
 	if err != nil {
-		t.Error("DB is not initialized")
+		t.Error(err)
 		return
 	}
 
-	err = student.CreateStudent(db, testStudent)
+	newStudent := student.Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = student.CreateStudent(db, newStudent)
 	if err != nil {
-		t.Error("Couldn't create a new student")
+		t.Error(err)
 		return
 	}
 
-	err = subject.CreateSubject(db, testSubject)
+	newSubject := subject.Subject{ID: 666, Name: "Test", Description: "Test"}
+	err = subject.CreateSubject(db, newSubject)
 	if err != nil {
-		t.Error("Couldn't create a new subject")
+		t.Error(err)
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	// Perform
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
 	if err != nil {
-		t.Error("Couldn't add the student to the subject")
+		t.Error(err)
 		return
 	}
 
-	err = RemoveStudentFromSubject(db, testStudent.ID, testSubject.ID)
+	fetchedStudentSubject, err := GetStudentSubject(db, newStudent.ID, newSubject.ID)
 	if err != nil {
-		t.Error("Couldn't remove the student from the subject")
+		t.Error(err)
 		return
 	}
+
+	// Assert
+	if fetchedStudentSubject.StudentID != newStudent.ID || fetchedStudentSubject.SubjectID != newSubject.ID {
+		t.Errorf("Expected %v %v, got %v %v", newStudent.ID, newSubject.ID, fetchedStudentSubject.StudentID, fetchedStudentSubject.SubjectID)
+		return
+	}
+
+	err = RemoveStudentFromSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = subject.DeleteSubject(db, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = student.DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
 	return
 }
 
 func Test_AddStudentToNonExistantSubject(t *testing.T) {
-	testStudent := student.Student{ID: 51, FirstName: "Amílcar", LastName: "Alho", CursoID: 1, StartDate: time.Now().UTC()}
-	testSubject := subject.Subject{ID: 21, Name: "Introdução às Telecomunicações", Description: "Stupid"}
-
-	db, err := initializeDB()
+	// Given
+	db, err := StartDB()
 	if err != nil {
-		t.Error("DB is not initialized")
+		t.Error(err)
 		return
 	}
 
-	err = student.CreateStudent(db, testStudent)
+	newStudent := student.Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = student.CreateStudent(db, newStudent)
 	if err != nil {
-		t.Error("Couldn't create a new student")
+		t.Error(err)
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
-	if err != nil {
+	// Perform
+	err = AddStudentToSubject(db, newStudent.ID, 666)
+	if err == nil {
+		t.Error(err)
 		return
 	}
-	t.Errorf("Expected err != nil, Got %v", err)
+
+	fetchedStudentSubject, err := GetStudentSubject(db, newStudent.ID, 666)
+	if err == nil {
+		t.Error(err)
+		return
+	}
+
+	// Assert
+	if fetchedStudentSubject.StudentID == newStudent.ID && fetchedStudentSubject.SubjectID == 666 {
+		t.Errorf("Expected %v %v, got %v %v", newStudent.ID, 666, fetchedStudentSubject.StudentID, fetchedStudentSubject.SubjectID)
+		return
+	}
+
+	err = RemoveStudentFromSubject(db, newStudent.ID, 666)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = student.DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
 	return
 }
 
 func Test_AddNonExistantStudentToSubject(t *testing.T) {
-	testStudent := student.Student{ID: 7, FirstName: "Cristiano", LastName: "Ronaldo", CursoID: 1, StartDate: time.Now().UTC()}
-	testSubject := subject.Subject{ID: 24, Name: "Sistemas de Telecomunicações", Description: "Easy"}
-
-	db, err := initializeDB()
+	// Given
+	db, err := StartDB()
 	if err != nil {
-		t.Error("DB is not initialized")
+		t.Error(err)
 		return
 	}
 
-	err = subject.CreateSubject(db, testSubject)
+	newSubject := subject.Subject{ID: 666, Name: "Test", Description: "Test"}
+	err = subject.CreateSubject(db, newSubject)
 	if err != nil {
-		t.Error("Couldn't create a new subject")
+		t.Error(err)
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
-	if err != nil {
-		return
-	}
-	t.Errorf("Expected err != nil, Got %v", err)
-	return
-}
-
-func Test_AddRegistedStudentToSubject(t *testing.T) {
-	testStudent := student.Student{ID: 57, FirstName: "Maria", LastName: "Manel", CursoID: 1, StartDate: time.Now().UTC()}
-	testSubject := subject.Subject{ID: 14, Name: "Geometria", Description: "Easy"}
-
-	db, err := initializeDB()
-	if err != nil {
-		t.Error("DB is not initialized")
-		return
-	}
-
-	err = student.CreateStudent(db, testStudent)
-	if err != nil {
-		t.Error("Couldn't create a new student")
-		return
-	}
-
-	err = subject.CreateSubject(db, testSubject)
-	if err != nil {
-		t.Error("Couldn't create a new subject")
-		return
-	}
-
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
-	if err != nil {
-		t.Error("Couldn't add the student to the subject")
-		return
-	}
-
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	// Perform
+	err = AddStudentToSubject(db, 666, newSubject.ID)
 	if err == nil {
-		t.Error("Could add the student again to the subject")
+		t.Error(err)
 		return
 	}
 
-	err = RemoveStudentFromSubject(db, testStudent.ID, testSubject.ID)
-	if err != nil {
-		t.Error("Couldn't remove the student from the subject")
+	fetchedStudentSubject, err := GetStudentSubject(db, 666, newSubject.ID)
+	if err == nil {
+		t.Error(err)
 		return
 	}
+
+	// Assert
+	if fetchedStudentSubject.StudentID == newSubject.ID && fetchedStudentSubject.SubjectID == 666 {
+		t.Errorf("Expected %v %v, got %v %v", 666, newSubject.ID, fetchedStudentSubject.StudentID, fetchedStudentSubject.SubjectID)
+		return
+	}
+
+	err = RemoveStudentFromSubject(db, 666, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = subject.DeleteSubject(db, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
 	return
 }
 
-func Test_GetSubjectAndInfoByStudentID(t *testing.T) {
-	testStudent := student.Student{ID: 18, FirstName: "Zézinho", LastName: "Manel", CursoID: 4, StartDate: time.Now().UTC()}
-	testSubject := subject.Subject{ID: 20, Name: "Cálculo Numérico", Description: "Easy"}
-
-	db, err := initializeDB()
+func Test_AddRepeatedStudentToSubject(t *testing.T) {
+	// Given
+	db, err := StartDB()
 	if err != nil {
-		t.Error("DB is not initialized")
+		t.Error(err)
 		return
 	}
 
-	err = student.CreateStudent(db, testStudent)
+	newStudent := student.Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = student.CreateStudent(db, newStudent)
 	if err != nil {
-		t.Error("Couldn't create a new student")
+		t.Error(err)
 		return
 	}
 
-	err = subject.CreateSubject(db, testSubject)
+	newSubject := subject.Subject{ID: 666, Name: "Test", Description: "Test"}
+	err = subject.CreateSubject(db, newSubject)
 	if err != nil {
-		t.Error("Couldn't create a new subject")
+		t.Error(err)
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
 	if err != nil {
-		t.Error("Couldn't add the student to the subject")
+		t.Error(err)
 		return
 	}
 
-	_, err = GetSubjectAndInfoByStudentID(db, testStudent.ID)
+	fetchedStudentSubject, err := GetStudentSubject(db, newStudent.ID, newSubject.ID)
 	if err != nil {
-		t.Error("Couldn't get subject and info of given student")
+		t.Error(err)
 		return
 	}
 
-	err = RemoveStudentFromSubject(db, testStudent.ID, testSubject.ID)
-	if err != nil {
-		t.Error("Couldn't remove the student from the subject")
+	// Perform
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
+	if err == nil {
+		t.Error(err)
 		return
 	}
+
+	repeatedStudentSubject, err := GetStudentSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Assert
+	if repeatedStudentSubject != fetchedStudentSubject {
+		t.Errorf("Expected %v, got %v", fetchedStudentSubject, repeatedStudentSubject)
+		return
+	}
+
+	err = RemoveStudentFromSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = subject.DeleteSubject(db, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = student.DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
 	return
 }
 
-func initializeDB() (DB *gorm.DB, err error) {
+func Test_RemoveStudentFromSubject(t *testing.T) {
+	// Given
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newStudent := student.Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = student.CreateStudent(db, newStudent)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newSubject := subject.Subject{ID: 666, Name: "Test", Description: "Test"}
+	err = subject.CreateSubject(db, newSubject)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Perform
+	err = RemoveStudentFromSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	_, err = GetStudentSubject(db, newStudent.ID, newSubject.ID)
+
+	// Assert
+	if err == nil {
+		t.Error("StudentSubject not properly removed")
+		return
+	}
+
+	err = RemoveStudentFromSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = subject.DeleteSubject(db, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = student.DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	return
+}
+
+func Test_GetStudentSubject(t *testing.T) {
+	// Given
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newStudent := student.Student{ID: 666, FirstName: "Test", LastName: "Test", CursoID: 666, StartDate: time.Now().UTC().Unix(), Email: "t.test_666@campus.fct.unl.pt"}
+	err = student.CreateStudent(db, newStudent)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newSubject := subject.Subject{ID: 666, Name: "Test", Description: "Test"}
+	err = subject.CreateSubject(db, newSubject)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Perform
+	fetchedStudentSubject, err := GetStudentSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Assert
+	if fetchedStudentSubject.StudentID != newStudent.ID || fetchedStudentSubject.SubjectID != newSubject.ID {
+		t.Errorf("Expected %v %v, got %v %v", newStudent.ID, newSubject.ID, fetchedStudentSubject.StudentID, fetchedStudentSubject.SubjectID)
+		return
+	}
+
+	err = RemoveStudentFromSubject(db, newStudent.ID, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = subject.DeleteSubject(db, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = student.DeleteStudent(db, newStudent.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	return
+}
+
+func StartDB() (DB *gorm.DB, err error) {
 	DB, err = gorm.Open("sqlite3", "../clip_holy_grail.db")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
 	DB.SingularTable(true)
 	return
 }
