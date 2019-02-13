@@ -2,6 +2,7 @@ package grade
 
 import (
 	"fmt"
+	"team-academy/student"
 	"team-academy/student_subject"
 
 	"github.com/jinzhu/gorm"
@@ -45,7 +46,13 @@ func GetGradeByStudentIDAndSubjectID(db *gorm.DB, studentID int, subjectID int) 
 }
 
 func GetStudentsGrades(db *gorm.DB, id int) (grades []StudentGrade, err error) {
-	err = db.Table("student").Select("student_subject.student_id, student.first_name, student.last_name, subject.name, student_subject.subject_id, grade.rank").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Joins("JOIN grade ON student.id = grade.student_id").Where(&Grade{StudentID: id}).Scan(&grades).Error
+	err = db.Table("student").
+		Select("student_subject.student_id, student.first_name, student.last_name, subject.name, student_subject.subject_id, grade.rank").
+		Joins("JOIN student_subject ON student.id = student_subject.student_id").
+		Joins("JOIN subject ON subject.id = student_subject.subject_id").
+		Joins("JOIN grade ON student.id = grade.student_id AND subject.id = grade.subject_id").
+		Where(&student.Student{ID: id}).Scan(&grades).Error
+
 	for _, v := range grades {
 		fmt.Println(v)
 	}
