@@ -74,3 +74,23 @@ func FetchGradeBySubjectController(w http.ResponseWriter, r *http.Request) {
     }
     w.Write(list)
 }
+
+func FetchStudentsGradesController(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    studentID := vars["studentID"]
+    id, err := strconv.Atoi(studentID)
+    if err != nil {
+        return
+    }
+    g, err := GetStudentsGrades(component.App.DB, id)
+    if err != nil {
+        w.Write([]byte(err.Error()))
+        return
+    }
+    list, err := json.Marshal(g)
+    if err != nil {
+        w.Write([]byte(err.Error()))
+        return
+    }
+    w.Write(list)
+}
