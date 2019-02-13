@@ -20,17 +20,12 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func CreateSubject(db *gorm.DB, newSubject Subject) (err error) {
-	_, err = GetSubjectByID(db, newSubject.ID)
-	if err != nil {
-		return db.Save(&newSubject).Error
-	}
-
 	_, err = GetSubjectByName(db, newSubject.Name)
 	if err != nil {
 		return db.Save(&newSubject).Error
 	}
 
-	err = component.ErrSomethingAlreadyExists
+	err = component.ErrSubjectAlreadyExists
 	return
 }
 

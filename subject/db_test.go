@@ -48,8 +48,14 @@ func Test_CreateSubject(t *testing.T) {
 
 func Test_CreateDuplicateSubject(t *testing.T) {
 	// Given
-	subject := Subject{ID: 666, Name: "Test", Description: "Test"}
 	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	subject := Subject{ID: 666, Name: "Test", Description: "Test"}
+	err = CreateSubject(db, subject)
 	if err != nil {
 		t.Error(err)
 		return
@@ -57,13 +63,7 @@ func Test_CreateDuplicateSubject(t *testing.T) {
 
 	// Perform
 	err = CreateSubject(db, subject)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	err = CreateSubject(db, subject)
-	if err != component.ErrSomethingAlreadyExists {
+	if err != component.ErrSubjectAlreadyExists {
 		t.Error(err)
 		return
 	}
@@ -90,23 +90,69 @@ func Test_CreateDuplicateSubject(t *testing.T) {
 	return
 }
 
-func Test_DeleteSubject(t *testing.T) {
+func Test_UpdateSubject(t *testing.T) {
 	// Given
 	db, err := StartDB()
 	if err != nil {
-		fmt.Println(err)
+		t.Error(err)
 		return
 	}
 
 	newSubject := Subject{ID: 666, Name: "Test", Description: "Test"}
 	err = CreateSubject(db, newSubject)
 	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Perform
+	updatedSubject := Subject{ID: 666, Name: "Updated", Description: "Updated"}
+	err = UpdateSubjectInfo(db, updatedSubject)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	testSubject, err := GetSubjectByID(db, updatedSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	// Assert
+	if updatedSubject != testSubject {
+		t.Error("The subject wasn't updated ")
+		return
+	}
+
+	err = DeleteSubject(db, newSubject.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	return
+}
+
+func Test_DeleteSubject(t *testing.T) {
+	// Given
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newSubject := Subject{ID: 666, Name: "Test", Description: "Test"}
+	err = CreateSubject(db, newSubject)
+	if err != nil {
+		t.Error(err)
 		return
 	}
 
 	// Perform
 	err = DeleteSubject(db, newSubject.ID)
 	if err != nil {
+		t.Error(err)
 		return
 	}
 
@@ -115,6 +161,7 @@ func Test_DeleteSubject(t *testing.T) {
 	// Assert
 	if err == nil {
 		t.Error("Subject wasn't properly deleted.")
+		return
 	}
 
 	return
@@ -132,13 +179,14 @@ func Test_GetSubjectByID(t *testing.T) {
 	// Perform
 	err = CreateSubject(db, newSubject)
 	if err != nil {
+		t.Error(err)
 		return
 	}
 
 	testSubject, err := GetSubjectByID(db, newSubject.ID)
 
 	// Assert
-	if newSubject.ID != testSubject.ID || newSubject.Name != testSubject.Name || newSubject.Description != testSubject.Description {
+	if newSubject != testSubject {
 		t.Error("The fetched subject is different from the original subject")
 		return
 	}
@@ -175,7 +223,7 @@ func Test_GetSubjectByName(t *testing.T) {
 	}
 
 	// Assert
-	if newSubject.ID != testSubject.ID || newSubject.Name != testSubject.Name || newSubject.Description != testSubject.Description {
+	if newSubject != testSubject {
 		t.Error("The fetched subject is different from the original subject")
 		return
 	}
@@ -197,6 +245,5 @@ func StartDB() (db *gorm.DB, err error) {
 	}
 
 	db.SingularTable(true)
-
 	return
 }

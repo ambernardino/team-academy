@@ -66,199 +66,199 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	rand.Seed(1)
 
 	if !existsSubjectTable {
-		newSubject := subject.Subject{ID: 1, Name: "Análise Matemática I", Description: "Cálculo Diferencial e Integral em R"}
+		newSubject := subject.Subject{Name: "Análise Matemática I", Description: "Cálculo Diferencial e Integral em R"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 2, Name: "Álgebra Linear e Geometria Analítica", Description: "Matrizes, sistemas, determinantes, etc."}
+		newSubject = subject.Subject{Name: "Álgebra Linear e Geometria Analítica", Description: "Matrizes, sistemas, determinantes, etc."}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 3, Name: "Desenho Assistido por Computador", Description: "AutoCAD para plantas elétricas"}
+		newSubject = subject.Subject{Name: "Desenho Assistido por Computador", Description: "AutoCAD para plantas elétricas"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 4, Name: "Programação de Microprocessadores", Description: "Programação em C"}
+		newSubject = subject.Subject{Name: "Programação de Microprocessadores", Description: "Programação em C"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 5, Name: "Sistemas Lógicos I", Description: "Lógica Booleana, Portas Lógicas, Biestáveis, etc."}
+		newSubject = subject.Subject{Name: "Sistemas Lógicos I", Description: "Lógica Booleana, Portas Lógicas, Biestáveis, etc."}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 6, Name: "Competências Transversais às Ciências e Tecnologia", Description: "Curriculum Vitae, entrevistas de emprego, bibliografias, etc."}
+		newSubject = subject.Subject{Name: "Competências Transversais às Ciências e Tecnologia", Description: "Curriculum Vitae, entrevistas de emprego, bibliografias, etc."}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 7, Name: "Algoritmos e Estruturas de Dados", Description: "TADs"}
+		newSubject = subject.Subject{Name: "Algoritmos e Estruturas de Dados", Description: "TADs"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 8, Name: "Análise Matemática II B", Description: "Cálculo Diferencial e Integral em Rn"}
+		newSubject = subject.Subject{Name: "Análise Matemática II B", Description: "Cálculo Diferencial e Integral em Rn"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 9, Name: "Física I", Description: "Mecânica Clássica"}
+		newSubject = subject.Subject{Name: "Física I", Description: "Mecânica Clássica"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 10, Name: "Sistemas Lógicos II", Description: "Microprocessador de 16-bits"}
+		newSubject = subject.Subject{Name: "Sistemas Lógicos II", Description: "Microprocessador de 16-bits"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 11, Name: "Teoria de Circuitos Elétricos", Description: "Lei de Ohm, nós, malhas, circuitos reativos, etc."}
+		newSubject = subject.Subject{Name: "Teoria de Circuitos Elétricos", Description: "Lei de Ohm, nós, malhas, circuitos reativos, etc."}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 12, Name: "Análise Matemática III B", Description: "Séries e números complexos"}
+		newSubject = subject.Subject{Name: "Análise Matemática III B", Description: "Séries e números complexos"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 13, Name: "Cálculo Numérico", Description: "Métodos numéricos para resolução de problemas de cálculo"}
+		newSubject = subject.Subject{Name: "Cálculo Numérico", Description: "Métodos numéricos para resolução de problemas de cálculo"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 14, Name: "Física III", Description: "Eletromagnetismo com o Meme Paiva"}
+		newSubject = subject.Subject{Name: "Física III", Description: "Eletromagnetismo com o Meme Paiva"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 15, Name: "Introdução às Telecomunicações", Description: "Transformada de Fourier, Modulações Analógicas e Digitais, etc."}
+		newSubject = subject.Subject{Name: "Introdução às Telecomunicações", Description: "Transformada de Fourier, Modulações Analógicas e Digitais, etc."}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 16, Name: "Microprocessadores", Description: "Memória RAM, Protocolos de Transferência de Dados, Assembly"}
+		newSubject = subject.Subject{Name: "Microprocessadores", Description: "Memória RAM, Protocolos de Transferência de Dados, Assembly"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 17, Name: "Ciências, Tecnologia e Sociedade", Description: "Aulas de humanidades numa faculdade de ciências"}
+		newSubject = subject.Subject{Name: "Ciências, Tecnologia e Sociedade", Description: "Aulas de humanidades numa faculdade de ciências"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 18, Name: "Análise Matemática IV B", Description: "Equações diferenciais"}
+		newSubject = subject.Subject{Name: "Análise Matemática IV B", Description: "Equações diferenciais"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 19, Name: "Eletrónica I", Description: "Díodos, Transístores, Ampops, etc."}
+		newSubject = subject.Subject{Name: "Eletrónica I", Description: "Díodos, Transístores, Ampops, etc."}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 20, Name: "Probabilidade e Estatística C", Description: "Probabilidade e Estatística"}
+		newSubject = subject.Subject{Name: "Probabilidade e Estatística C", Description: "Probabilidade e Estatística"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 21, Name: "Sistemas de Telecomunicações", Description: "Camadas do Modelo OSI, Protocolos, Java"}
+		newSubject = subject.Subject{Name: "Sistemas de Telecomunicações", Description: "Camadas do Modelo OSI, Protocolos, Java"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 22, Name: "Teoria de Sinais", Description: "D'onde"}
+		newSubject = subject.Subject{Name: "Teoria de Sinais", Description: "D'onde"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 23, Name: "Eletrotecnia Teórica", Description: "TEDx - Introdução à Meditação com Mário Neves"}
+		newSubject = subject.Subject{Name: "Eletrotecnia Teórica", Description: "TEDx - Introdução à Meditação com Mário Neves"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 24, Name: "Eletrónica II", Description: "Ampops, Realimentação, Estabilidade, Osciladores, Filtros"}
+		newSubject = subject.Subject{Name: "Eletrónica II", Description: "Ampops, Realimentação, Estabilidade, Osciladores, Filtros"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 25, Name: "Física II", Description: "Cinética e Termodinâmica"}
+		newSubject = subject.Subject{Name: "Física II", Description: "Cinética e Termodinâmica"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 26, Name: "Sistemas de Tempo Real", Description: "Tutorial de Solitário com Luís Matos"}
+		newSubject = subject.Subject{Name: "Sistemas de Tempo Real", Description: "Tutorial de Solitário com Luís Matos"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 27, Name: "Teoria de Sinais", Description: "Diagramas de blocos, etc."}
+		newSubject = subject.Subject{Name: "Teoria de Controlo", Description: "Diagramas de blocos, etc."}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 28, Name: "Programa de Introdução à Investigação Científica", Description: "Estágio"}
+		newSubject = subject.Subject{Name: "Programa de Introdução à Investigação Científica", Description: "Estágio"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 29, Name: "Controlo por Computador", Description: "TC Digital"}
+		newSubject = subject.Subject{Name: "Controlo por Computador", Description: "TC Digital"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 30, Name: "Conversão Eletromecânica de Energia", Description: "ET 2"}
+		newSubject = subject.Subject{Name: "Conversão Eletromecânica de Energia", Description: "ET 2"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 31, Name: "Instrumentação e Medidas Elétricas", Description: "Carrola FTW"}
+		newSubject = subject.Subject{Name: "Instrumentação e Medidas Elétricas", Description: "Carrola FTW"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 32, Name: "Modelação de Dados em Engenharia", Description: "Databases are easy"}
+		newSubject = subject.Subject{Name: "Modelação de Dados em Engenharia", Description: "Databases are easy"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
 		}
 
-		newSubject = subject.Subject{ID: 33, Name: "Propagação e Radiação", Description: "Female Ventim"}
+		newSubject = subject.Subject{Name: "Propagação e Radiação", Description: "Female Ventim"}
 		err = subject.CreateSubject(db, newSubject)
 		if err != nil {
 			return
@@ -270,7 +270,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 			firstName := randomFirstName()
 			lastName := randomLastName()
 			email := generateProfessorEmail(i, firstName, lastName)
-			newProfessor := professor.Professor{ID: i, FirstName: firstName, LastName: lastName, CursoID: randomInt(1, 5), StartDate: int64(randomInt(220924800, 1419984000)), Email: email}
+			newProfessor := professor.Professor{FirstName: firstName, LastName: lastName, CursoID: randomInt(1, 5), StartDate: int64(randomInt(220924800, 1419984000)), Email: email}
 			err = professor.CreateProfessor(db, newProfessor)
 			if err != nil {
 				return
@@ -283,7 +283,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 			firstName := randomFirstName()
 			lastName := randomLastName()
 			email := generateStudentEmail(i, firstName, lastName)
-			newStudent := student.Student{ID: i, FirstName: firstName, LastName: lastName, CursoID: randomInt(1, 5), StartDate: int64(randomInt(1420070400, 1546300800)), Email: email}
+			newStudent := student.Student{FirstName: firstName, LastName: lastName, CursoID: randomInt(1, 5), StartDate: int64(randomInt(1420070400, 1546300800)), Email: email}
 			err = student.CreateStudent(db, newStudent)
 			if err != nil {
 				return
