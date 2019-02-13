@@ -2,15 +2,16 @@ package student_shift
 
 import (
 	"team-academy/component"
+	"team-academy/shift"
 
 	"github.com/jinzhu/gorm"
 )
 
 type StudentShift struct {
 	ID        int `gorm:"AUTO_INCREMENT"`
-	ShiftID   int
 	StudentID int
 	SubjectID int
+	ShiftID   int
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
@@ -28,4 +29,9 @@ func AddStudentToShift(db *gorm.DB, studentID int, shiftID int) (err error) {
 	}
 
 	return db.Save(&StudentShift{StudentID: studentID, ShiftID: shiftID}).Error
+}
+
+func GetShiftsByStudentID(db *gorm.DB, id int) (shifts []shift.Shift, err error) {
+	err = db.Model(&StudentShift{}).Where(&StudentShift{StudentID: id}).Find(&shifts).Error
+	return
 }

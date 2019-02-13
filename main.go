@@ -72,6 +72,7 @@ func main() {
 	r.HandleFunc("/grade/student/{ID}/", grade.FetchGradeByStudentController).Methods("GET")
 	r.HandleFunc("/grade/", grade.CreateGradeController).Methods("POST")
 	r.HandleFunc("/grade/", grade.UpdateGradeController).Methods("PUT")
+	r.HandleFunc("/grade/{studentID}/info/", grade.FetchStudentsGradesController).Methods("GET")
 
 	//schedule
 	r.HandleFunc("/schedule/{ID}/", schedule.FetchScheduleController).Methods("GET")
