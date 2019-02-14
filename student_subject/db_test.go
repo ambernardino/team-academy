@@ -12,7 +12,7 @@ import (
 )
 
 func Test_AddStudentToSubject(t *testing.T) {
-	testStudent := student.Student{ID: 7, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC()}
+	testStudent := student.Student{ID: 7, FirstName: "Eleutério", LastName: "Azemeís", CursoID: 1, StartDate: time.Now().UTC().Unix()}
 	testSubject := subject.Subject{ID: 9, Name: "Análise Matemática 4", Description: "Easy"}
 
 	db, err := initializeDB()
@@ -33,7 +33,9 @@ func Test_AddStudentToSubject(t *testing.T) {
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	time := time.Now().UTC().Unix()
+
+	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID, time)
 	if err != nil {
 		t.Error("Couldn't add the student to the subject")
 		return
@@ -48,7 +50,7 @@ func Test_AddStudentToSubject(t *testing.T) {
 }
 
 func Test_AddStudentToNonExistantSubject(t *testing.T) {
-	testStudent := student.Student{ID: 51, FirstName: "Amílcar", LastName: "Alho", CursoID: 1, StartDate: time.Now().UTC()}
+	testStudent := student.Student{ID: 51, FirstName: "Amílcar", LastName: "Alho", CursoID: 1, StartDate: time.Now().UTC().Unix()}
 	testSubject := subject.Subject{ID: 21, Name: "Introdução às Telecomunicações", Description: "Stupid"}
 
 	db, err := initializeDB()
@@ -63,7 +65,9 @@ func Test_AddStudentToNonExistantSubject(t *testing.T) {
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	time := time.Now().UTC().Unix()
+
+	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID, time)
 	if err != nil {
 		return
 	}
@@ -72,7 +76,7 @@ func Test_AddStudentToNonExistantSubject(t *testing.T) {
 }
 
 func Test_AddNonExistantStudentToSubject(t *testing.T) {
-	testStudent := student.Student{ID: 7, FirstName: "Cristiano", LastName: "Ronaldo", CursoID: 1, StartDate: time.Now().UTC()}
+	testStudent := student.Student{ID: 7, FirstName: "Cristiano", LastName: "Ronaldo", CursoID: 1, StartDate: time.Now().UTC().Unix()}
 	testSubject := subject.Subject{ID: 24, Name: "Sistemas de Telecomunicações", Description: "Easy"}
 
 	db, err := initializeDB()
@@ -87,7 +91,9 @@ func Test_AddNonExistantStudentToSubject(t *testing.T) {
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	time := time.Now().UTC().Unix()
+
+	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID, time)
 	if err != nil {
 		return
 	}
@@ -96,7 +102,7 @@ func Test_AddNonExistantStudentToSubject(t *testing.T) {
 }
 
 func Test_AddRegistedStudentToSubject(t *testing.T) {
-	testStudent := student.Student{ID: 57, FirstName: "Maria", LastName: "Manel", CursoID: 1, StartDate: time.Now().UTC()}
+	testStudent := student.Student{ID: 57, FirstName: "Maria", LastName: "Manel", CursoID: 1, StartDate: time.Now().UTC().Unix()}
 	testSubject := subject.Subject{ID: 14, Name: "Geometria", Description: "Easy"}
 
 	db, err := initializeDB()
@@ -117,13 +123,15 @@ func Test_AddRegistedStudentToSubject(t *testing.T) {
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	time := time.Now().UTC().Unix()
+
+	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID, time)
 	if err != nil {
 		t.Error("Couldn't add the student to the subject")
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID, time)
 	if err == nil {
 		t.Error("Could add the student again to the subject")
 		return
@@ -138,7 +146,7 @@ func Test_AddRegistedStudentToSubject(t *testing.T) {
 }
 
 func Test_GetSubjectAndInfoByStudentID(t *testing.T) {
-	testStudent := student.Student{ID: 18, FirstName: "Zézinho", LastName: "Manel", CursoID: 4, StartDate: time.Now().UTC()}
+	testStudent := student.Student{ID: 18, FirstName: "Zézinho", LastName: "Manel", CursoID: 4, StartDate: time.Now().UTC().Unix()}
 	testSubject := subject.Subject{ID: 20, Name: "Cálculo Numérico", Description: "Easy"}
 
 	db, err := initializeDB()
@@ -159,7 +167,9 @@ func Test_GetSubjectAndInfoByStudentID(t *testing.T) {
 		return
 	}
 
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID)
+	time := time.Now().UTC().Unix()
+
+	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID, time)
 	if err != nil {
 		t.Error("Couldn't add the student to the subject")
 		return

@@ -59,6 +59,22 @@ func GetStudentAndInfoBySubjectID(db *gorm.DB, id int) (infos []Information, err
 }
 
 func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&infos).Error
+	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").
+	Joins("JOIN student_subject ON student.id = student_subject.student_id").
+	Joins("JOIN subject ON subject.id = student_subject.subject_id").
+	Where(&StudentSubject{StudentID: id}).
+	Scan(&infos).Error
+
+	return
+}
+
+func GetSubjectAndInfoByStudentIDAndTimeStamp (db *gorm.DB, id int, BeginningSchoolYear int64, EndingSchoolYear int64) (infos []Information, err error) {
+
+	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").
+	Joins("JOIN student_subject ON student.id = student_subject.student.student_id").
+	Joins("JOIN subject ON subject.id = student_subject-subject.id").
+	Where(&StudentSubject{StudentID: id}, "AND student_subject.date BETWEEN ? AND ?", BeginningSchoolYear, EndingSchoolYear).
+	Scan(&infos).Error
+
 	return
 }

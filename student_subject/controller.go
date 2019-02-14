@@ -153,3 +153,47 @@ func RemoveStudentFromSubjectController(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 }
+
+func FetchSubjectAndInfoByStudentIDAndTimeStampController(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	studentID := vars["studentID"]
+	beginSchool := vars["beginSchool"]
+	endSchool := vars["endSchool"]
+
+	studID, err := strconv.Atoi(studentID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	layout := "01/02/2006 3:04:05 PM"
+	beginSchool = "09/01/" + beginSchool + " 0:00:00 AM"
+	endSchool = "07/31/" + endSchool + " 0:00:00 AM"
+
+	beginTime, err := time.Parse(layout, beginSchool)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	endTime, err := time.Parse(layout, endSchool)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	timeStart := beginTime.UTC().Unix()
+	timeEnd := endTime.UTC().Unix()
+
+	info, err := GetSubjectAndInfoByStudentIDAndTimeStamp(component.App.DB, studID, timeStart, timeEnd)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	encodedInfo, err := json.Marshal(info)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(encodedInfo)
+}
