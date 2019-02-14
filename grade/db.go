@@ -12,6 +12,7 @@ type Grade struct {
 	SubjectID int    `json:"subject_id,omitempty"`
 	StudentID int    `json:"student_id,omitempty"`
 	Rank      string `json:"rank,omitempty"`
+	Date      int64  `json:"date,omitempty"`
 }
 
 type StudentGrade struct {

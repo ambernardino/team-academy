@@ -11,6 +11,7 @@ type ProfessorSubject struct {
 	ID          int `gorm:"AUTO_INCREMENT"`
 	ProfessorID int
 	SubjectID   int
+	Date        int64
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
@@ -20,7 +21,7 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	return true, nil
 }
 
-func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int) (err error) {
+func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int, date int64) (err error) {
 	rows, err := db.Table("professor").Select("professor_subject.professor_id, professor_subject.subject_id").Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").Joins("JOIN subject ON subject.id = professor_subject.subject_id").Where(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID}).Rows()
 
 	if rows.Next() {
@@ -28,7 +29,7 @@ func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int) (err error) 
 		return
 	}
 
-	return db.Save(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID}).Error
+	return db.Save(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID, Date: date}).Error
 }
 
 func GetProfessorsBySubjectID(db *gorm.DB, id int) (professors []ProfessorSubject, err error) {

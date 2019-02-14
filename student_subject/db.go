@@ -10,6 +10,7 @@ type StudentSubject struct {
 	ID        int `gorm:"AUTO_INCREMENT"`
 	StudentID int
 	SubjectID int
+	Date      int64
 }
 
 type Information struct {
@@ -27,7 +28,7 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	return true, nil
 }
 
-func AddStudentToSubject(db *gorm.DB, studentID, subjectID int) (err error) {
+func AddStudentToSubject(db *gorm.DB, studentID, subjectID int, date int64) (err error) {
 	rows, err := db.Table("student").Select("student_subject.student_id, student_subject.subject_id").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Rows()
 
 	if rows.Next() {
@@ -35,7 +36,7 @@ func AddStudentToSubject(db *gorm.DB, studentID, subjectID int) (err error) {
 		return
 	}
 
-	return db.Save(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Error
+	return db.Save(&StudentSubject{StudentID: studentID, SubjectID: subjectID, Date: date}).Error
 }
 
 func RemoveStudentFromSubject(db *gorm.DB, studentID, subjectID int) (err error) {
