@@ -2,6 +2,7 @@ package professor_subject
 
 import (
 	"team-academy/component"
+
 	"team-academy/subject"
 
 	"github.com/jinzhu/gorm"
@@ -14,15 +15,6 @@ type ProfessorSubject struct {
 	Date        int64
 }
 
-
-type Information struct {
-	ProfessorID        int    `gorm:"column:id"`
-	ProfessorFirstName string `gorm:"column:first_name"`
-	ProfessorLastName  string `gorm:"column:last_name"`
-	SubjectID        int    `gorm:"column:id"`
-	SubjectName      string `gorm:"column:name"`
-}
-
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(ProfessorSubject{}) {
 		return false, db.CreateTable(ProfessorSubject{}).Error
@@ -31,14 +23,33 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int, date int64) (err error) {
-	rows, err := db.Table("professor").Select("professor_subject.professor_id, professor_subject.subject_id").Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").Joins("JOIN subject ON subject.id = professor_subject.subject_id").Where(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID}).Rows()
+	
+	_, err = subject.GetSubjectByID(db, subjectID)
+	if err != nil {
+		return
+	}
 
+	rows, err := db.Table("professor_subject").Select("professor_subject.professor_id, professor_subject.subject_id, professor.first_name, professor.last_name, subject.name").Joins("JOIN professor ON professor.id = professor_subject.professor_id").Joins("JOIN subject ON subject.id = professor_subject.subject_id").Where(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID}).Rows()
+	if err != nil {
+		return
+	}
+
+	defer rows.Close()
 	if rows.Next() {
 		err = component.ErrProfessorAlreadyInSubject
 		return
 	}
 
 	return db.Save(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID, Date: date}).Error
+}
+
+func RemoveProfessorFromSubject(db *gorm.DB, professorID, subjectID int) (err error) {
+	return db.Where(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID}).Delete(&ProfessorSubject{}).Error
+}
+
+func GetProfessorSubject(db *gorm.DB, professorID, subjectID int) (professorSubject ProfessorSubject, err error) {
+	err = db.First(&professorSubject, &ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID}).Error
+	return
 }
 
 func GetProfessorsBySubjectID(db *gorm.DB, id int) (professors []ProfessorSubject, err error) {
@@ -61,12 +72,12 @@ func GetSubjectsAndInfoByProfessorID(db *gorm.DB, id int) (subjects []subject.Su
 }
 
 
-func GetSubjectAndInfobyProfessorIDAndTimeStamp (db *gorm.DB, id int, BeginningSchoolYear int64, EndingSchoolYear int64) (infos []Information, err error) {
-	err = db.Table("professor").Select("professor.id, professor.first_name, professor.last_name, subject.id, subject.name").
+func GetSubjectAndInfobyProfessorIDAndTimeStamp (db *gorm.DB, id int, BeginningSchoolYear int64, EndingSchoolYear int64) (subjects []subject.Subject, err error) {
+	err = db.Table("professor").Select("subject.id, subject.name, subject.description").
 	Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
 	Joins("JOIN subject ON subject.id = professor_subject.subject_id").
 	Where("professor_subject.professor_id = ? AND professor_subject.date BETWEEN ? AND ?", id, BeginningSchoolYear, EndingSchoolYear).
-	Scan(&infos).Error
+	Scan(&subjects).Error
 
 	return
 }

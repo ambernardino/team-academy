@@ -55,6 +55,7 @@ func FetchStudentsBySubjectIDController(w http.ResponseWriter, r *http.Request) 
 		w.Write([]byte(err.Error()))
 		return
 	}
+
 	w.Write(encodedStudents)
 }
 
@@ -92,7 +93,7 @@ func FetchSubjectAndInfoByStudentIDController(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	info, err := GetSubjectAndInfoByStudentID(component.App.DB, ID)
+	info, err := GetSubjectsAndInfoByStudentID(component.App.DB, ID)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
