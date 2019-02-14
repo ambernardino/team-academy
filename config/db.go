@@ -296,7 +296,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 			for j := 1; j <= 34; j++ {
 				add := randomInt(0, 9)
 				if add >= 7 {
-					err = student_subject.AddStudentToSubject(db, i, j)
+					err = student_subject.AddStudentToSubject(db, i, j, int64(randomInt(1420070400, 1546300800)))
 					if err != nil {
 						return
 					}
@@ -310,7 +310,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 			for j := 1; j <= 34; j++ {
 				add := randomInt(0, 9)
 				if add >= 8 {
-					err = professor_subject.AddProfessorToSubject(db, i, j)
+					err = professor_subject.AddProfessorToSubject(db, i, j, int64(randomInt(1420070400, 1546300800)))
 					if err != nil {
 						return
 					}
@@ -322,7 +322,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	if !existsGradeTable {
 		for i := 1; i <= 34; i++ {
 			for j := 1; j <= 10; j++ {
-				newGrade := grade.Grade{SubjectID: i, StudentID: j, Rank: randomGrade(0.0, 20.0)}
+				newGrade := grade.Grade{SubjectID: i, StudentID: j, Rank: randomGrade(0.0, 20.0), Date: int64(randomInt(1420070400, 1546300800))}
 				err = grade.GiveGrade(db, newGrade)
 				if err != nil {
 					return
