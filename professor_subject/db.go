@@ -2,7 +2,7 @@ package professor_subject
 
 import (
 	"team-academy/component"
-	"team-academy/professor"
+
 	"team-academy/subject"
 
 	"github.com/jinzhu/gorm"
@@ -12,6 +12,7 @@ type ProfessorSubject struct {
 	ID          int `gorm:"AUTO_INCREMENT"`
 	ProfessorID int
 	SubjectID   int
+	Date        int64
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
@@ -21,12 +22,8 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	return true, nil
 }
 
-func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int) (err error) {
-	_, err = professor.GetProfessorByID(db, professorID)
-	if err != nil {
-		return
-	}
-
+func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int, date int64) (err error) {
+	
 	_, err = subject.GetSubjectByID(db, subjectID)
 	if err != nil {
 		return
@@ -43,7 +40,7 @@ func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int) (err error) 
 		return
 	}
 
-	return db.Save(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID}).Error
+	return db.Save(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID, Date: date}).Error
 }
 
 func RemoveProfessorFromSubject(db *gorm.DB, professorID, subjectID int) (err error) {
@@ -66,6 +63,21 @@ func GetSubjectsByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubject,
 }
 
 func GetSubjectsAndInfoByProfessorID(db *gorm.DB, id int) (subjects []subject.Subject, err error) {
-	err = db.Table("professor").Select("subject.id, subject.name, subject.description").Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").Joins("JOIN subject ON subject.id = professor_subject.subject_id").Where(&ProfessorSubject{ProfessorID: id}).Scan(&subjects).Error
+	err = db.Table("professor").Select("subject.id, subject.name, subject.description").
+	Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
+	Joins("JOIN subject ON subject.id = professor_subject.subject_id").
+	Where(&ProfessorSubject{ProfessorID: id}).
+	Scan(&subjects).Error
+	return
+}
+
+
+func GetSubjectAndInfobyProfessorIDAndTimeStamp (db *gorm.DB, id int, BeginningSchoolYear int64, EndingSchoolYear int64) (subjects []subject.Subject, err error) {
+	err = db.Table("professor").Select("subject.id, subject.name, subject.description").
+	Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
+	Joins("JOIN subject ON subject.id = professor_subject.subject_id").
+	Where("professor_subject.professor_id = ? AND professor_subject.date BETWEEN ? AND ?", id, BeginningSchoolYear, EndingSchoolYear).
+	Scan(&subjects).Error
+
 	return
 }
