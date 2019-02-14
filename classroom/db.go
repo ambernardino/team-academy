@@ -1,13 +1,16 @@
 package classroom
 
 import (
+	"team-academy/component"
+	"team-academy/department"
+
 	"github.com/jinzhu/gorm"
 )
 
 type Classroom struct {
-	ID            int
-	ClassroomName string
-	Department    int
+	ID           int `gorm:"AUTO_INCREMENT"`
+	Name         string
+	DepartmentID int
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
@@ -18,6 +21,12 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func CreateClassroom(db *gorm.DB, classroom Classroom) (err error) {
+	_, err = department.GetDepartmentByID(db, classroom.DepartmentID)
+	if err != nil {
+		err = component.ErrDepartmentDoesntExist
+		return
+	}
+
 	return db.Save(&classroom).Error
 }
 

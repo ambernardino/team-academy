@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+	"team-academy/classroom"
+	"team-academy/department"
 	"team-academy/grade"
 	"team-academy/professor"
 	"team-academy/professor_subject"
@@ -18,6 +20,11 @@ import (
 )
 
 func PopulateDatabase(db *gorm.DB) (err error) {
+	existsSubjectTable, err := subject.CreateTableIfNotExists(db)
+	if err != nil {
+		return
+	}
+
 	existsProfessorTable, err := professor.CreateTableIfNotExists(db)
 	if err != nil {
 		return
@@ -28,7 +35,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 		return
 	}
 
-	existsSubjectTable, err := subject.CreateTableIfNotExists(db)
+	existsProfessorSubjectTable, err := professor_subject.CreateTableIfNotExists(db)
 	if err != nil {
 		return
 	}
@@ -38,17 +45,17 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 		return
 	}
 
-	existsProfessorSubjectTable, err := professor_subject.CreateTableIfNotExists(db)
-	if err != nil {
-		return
-	}
-
 	existsGradeTable, err := grade.CreateTableIfNotExists(db)
 	if err != nil {
 		return
 	}
 
-	existsScheduleTable, err := schedule.CreateTableIfNotExists(db)
+	existsDepartmentTable, err := department.CreateTableIfNotExists(db)
+	if err != nil {
+		return
+	}
+
+	existsClassroomTable, err := classroom.CreateTableIfNotExists(db)
 	if err != nil {
 		return
 	}
@@ -59,6 +66,11 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	}
 
 	existsStudentShiftTable, err := student_shift.CreateTableIfNotExists(db)
+	if err != nil {
+		return
+	}
+
+	existsScheduleTable, err := schedule.CreateTableIfNotExists(db)
 	if err != nil {
 		return
 	}
@@ -291,9 +303,23 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 		}
 	}
 
+	if !existsProfessorSubjectTable {
+		for i := 1; i <= 10; i++ {
+			for j := 1; j <= 33; j++ {
+				add := randomInt(0, 9)
+				if add >= 7 {
+					err = professor_subject.AddProfessorToSubject(db, i, j, int64(randomInt(1420070400, 1546300800)))
+					if err != nil {
+						return
+					}
+				}
+			}
+		}
+	}
+
 	if !existsStudentSubjectTable {
 		for i := 1; i <= 10; i++ {
-			for j := 1; j <= 34; j++ {
+			for j := 1; j <= 33; j++ {
 				add := randomInt(0, 9)
 				if add >= 7 {
 					err = student_subject.AddStudentToSubject(db, i, j, int64(randomInt(1420070400, 1546300800)))
@@ -305,25 +331,11 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 		}
 	}
 
-	if !existsProfessorSubjectTable {
-		for i := 1; i <= 10; i++ {
-			for j := 1; j <= 34; j++ {
-				add := randomInt(0, 9)
-				if add >= 8 {
-					err = professor_subject.AddProfessorToSubject(db, i, j, int64(randomInt(1420070400, 1546300800)))
-					if err != nil {
-						return
-					}
-				}
-			}
-		}
-	}
-
 	if !existsGradeTable {
-		for i := 1; i <= 34; i++ {
-			for j := 1; j <= 10; j++ {
-				newGrade := grade.Grade{SubjectID: i, StudentID: j, Rank: randomGrade(0.0, 20.0), Date: int64(randomInt(1420070400, 1546300800))}
-				err = grade.GiveGrade(db, newGrade)
+		for i := 1; i <= 10; i++ {
+			for j := 1; j <= 33; j++ {
+				newGrade := grade.Grade{StudentID: i, SubjectID: j, Rank: randomGrade(0.0, 20.0), Date: int64(randomInt(1420070400, 1546300800))}
+				grade.GiveGrade(db, newGrade)
 				if err != nil {
 					return
 				}
@@ -331,10 +343,24 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 		}
 	}
 
-	if !existsScheduleTable {
-		for i := 1; i <= 14; i++ {
-			newSchedule := schedule.Schedule{SubjectID: randomInt(1, 11), ShiftID: randomInt(1, 14), Weekday: randomInt(0, 6), StartTime: 28800, EndTime: 36600}
-			err = schedule.CreateSchedule(db, newSchedule)
+	if !existsDepartmentTable {
+		newDepartment := department.Department{Name: "Departamento de Engenharia Eletrotécnica"}
+		err = department.CreateDepartment(db, newDepartment)
+		if err != nil {
+			return
+		}
+
+		newDepartment = department.Department{Name: "Departamento de Matemática"}
+		err = department.CreateDepartment(db, newDepartment)
+		if err != nil {
+			return
+		}
+	}
+
+	if !existsClassroomTable {
+		for i := 1; i <= 2; i++ {
+			newClassroom := classroom.Classroom{Name: strconv.Itoa(i), DepartmentID: i}
+			err = classroom.CreateClassroom(db, newClassroom)
 			if err != nil {
 				return
 			}
@@ -354,6 +380,16 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	if !existsStudentShiftTable {
 		for i := 1; i <= 10; i++ {
 			err = student_shift.AddStudentToShift(db, randomInt(1, 11), randomInt(1, 11))
+			if err != nil {
+				return
+			}
+		}
+	}
+
+	if !existsScheduleTable {
+		for i := 1; i <= 14; i++ {
+			newSchedule := schedule.Schedule{SubjectID: randomInt(1, 11), ShiftID: randomInt(1, 14), Weekday: randomInt(0, 6), StartTime: 28800, EndTime: 36600}
+			err = schedule.CreateSchedule(db, newSchedule)
 			if err != nil {
 				return
 			}
