@@ -54,16 +54,21 @@ func GetStudentsBySubjectID(db *gorm.DB, id int) (students []StudentSubject, err
 }
 
 func GetStudentAndInfoBySubjectID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{SubjectID: id}).Scan(&infos).Error
+	err = db.Table("student").
+		Select("student.id, student.first_name, student.last_name, subject.id, subject.name").
+		Joins("JOIN student_subject ON student.id = student_subject.student_id").
+		Joins("JOIN subject ON subject.id = student_subject.subject_id").
+		Where(&StudentSubject{SubjectID: id}).Scan(&infos).Error
 	return
 }
 
 func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").
-	Joins("JOIN student_subject ON student.id = student_subject.student_id").
-	Joins("JOIN subject ON subject.id = student_subject.subject_id").
-	Where(&StudentSubject{StudentID: id}).
-	Scan(&infos).Error
+	err = db.Table("student").
+		Select("student.id, student.first_name, student.last_name, subject.id, subject.name").
+		Joins("JOIN student_subject ON student.id = student_subject.student_id").
+		Joins("JOIN subject ON subject.id = student_subject.subject_id").
+		Where(&StudentSubject{StudentID: id}).
+		Scan(&infos).Error
 
 	return
 }
@@ -71,9 +76,9 @@ func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err
 func GetSubjectAndInfoByStudentIDAndTimeStamp (db *gorm.DB, id int, BeginningSchoolYear int64, EndingSchoolYear int64) (infos []Information, err error) {
 
 	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").
-	Joins("JOIN student_subject ON student.id = student_subject.student.student_id").
-	Joins("JOIN subject ON subject.id = student_subject-subject.id").
-	Where(&StudentSubject{StudentID: id}, "AND student_subject.date BETWEEN ? AND ?", BeginningSchoolYear, EndingSchoolYear).
+	Joins("JOIN student_subject ON student.id = student_subject.student_id").
+	Joins("JOIN subject ON subject.id = student_subject.subject_id").
+	Where("student_subject.student_id = ? AND student_subject.date BETWEEN ? AND ?", id, BeginningSchoolYear, EndingSchoolYear).
 	Scan(&infos).Error
 
 	return

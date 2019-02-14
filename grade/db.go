@@ -53,10 +53,6 @@ func GetStudentsGrades(db *gorm.DB, id int) (grades []StudentGrade, err error) {
 		Joins("JOIN subject ON subject.id = student_subject.subject_id").
 		Joins("JOIN grade ON student.id = grade.student_id AND subject.id = grade.subject_id").
 		Where(&student.Student{ID: id}).Scan(&grades).Error
-
-	for _, v := range grades {
-		fmt.Println(v)
-	}
 	return
 }
 
@@ -73,3 +69,22 @@ func GetGradeBySubjectID(db *gorm.DB, ID int) (grades []Grade, err error) {
 func UpdateGrade(db *gorm.DB, grade Grade) (err error) {
 	return db.Model(&Grade{}).Where(&Grade{StudentID: grade.StudentID, SubjectID: grade.SubjectID}).Update(grade).Error
 }
+
+func GetStudentsGradesbyTimeStampAndStudentID (db *gorm.DB, id int, BeginningSchoolYear int64, EndSchoolYear int64) (grades []StudentGrade, err error){
+	err = db.Table("student").
+		Select("student_subject.student_id, student.first_name, student.last_name, subject.name, student_subject.subject_id, grade.rank").
+		Joins("JOIN student_subject ON student.id = student_subject.student_id").
+		Joins("JOIN subject ON subject.id = student_subject.subject_id").
+		Joins("JOIN grade ON student.id = grade.student_id AND subject.id = grade.subject_id").
+		Where("student.id = ? AND grade.date BETWEEN ? AND ?", id, BeginningSchoolYear, EndSchoolYear).Scan(&grades).Error
+	return
+}
+
+
+
+
+
+
+
+
+

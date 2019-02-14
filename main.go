@@ -44,7 +44,7 @@ func main() {
 	//student subject
 	r.HandleFunc("/student/{studentID}/subjects/", student_subject.FetchSubjectsByStudentIDController).Methods("GET")
 	r.HandleFunc("/student/{studentID}/info/", student_subject.FetchSubjectAndInfoByStudentIDController).Methods("GET")
-	r.HandleFunc("/student/{studentID}/info/{beginSchool}/{endSchool}", student_subject.FetchSubjectAndInfoByStudentIDAndTimeStampController).Methods("GET")
+	r.HandleFunc("/student/{studentID}/info/{beginSchool}/{endSchool}/", student_subject.FetchSubjectAndInfoByStudentIDAndTimeStampController).Methods("GET")
 	r.HandleFunc("/subject/{subjectID}/students/", student_subject.FetchStudentsBySubjectIDController).Methods("GET")
 	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.AddStudentToSubjectController).Methods("POST")
 	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.RemoveStudentFromSubjectController).Methods("DELETE")
@@ -67,6 +67,7 @@ func main() {
 	r.HandleFunc("/professor/{ID}/subject/", professor_subject.FetchSubjectsByProfessorIDController).Methods("GET")
 	r.HandleFunc("/subject/{ID}/professor/", professor_subject.FetchProfessorsBySubjectIDController).Methods("GET")
 	r.HandleFunc("/professor/{professorID}/subject/{subjectID}/", professor_subject.CreateProfessorToSubjectController).Methods("POST")
+	r.HandleFunc("/subject/{professorID}/info/{beginSchool}/{endSchool}/", professor_subject.FetchSubjectAndInfobyProfessorIDAndTimeStampController).Methods("GET")
 
 	//grade
 	r.HandleFunc("/grade/subject/{ID}/", grade.FetchGradeBySubjectController).Methods("GET")
@@ -74,6 +75,7 @@ func main() {
 	r.HandleFunc("/grade/", grade.CreateGradeController).Methods("POST")
 	r.HandleFunc("/grade/", grade.UpdateGradeController).Methods("PUT")
 	r.HandleFunc("/grade/{studentID}/info/", grade.FetchStudentsGradesController).Methods("GET")
+	r.HandleFunc("/grade/{studentID}/info/{beginSchool}/{endSchool}/", grade.FetchStudentsGradesbyTimeStampAndStudentID).Methods("GET")
 
 	//schedule
 	r.HandleFunc("/schedule/{ID}/", schedule.FetchScheduleController).Methods("GET")

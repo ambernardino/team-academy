@@ -32,6 +32,50 @@ func FetchSubjectsByProfessorIDController(w http.ResponseWriter, r *http.Request
 	w.Write(subjectsInfo)
 }
 
+func FetchSubjectAndInfobyProfessorIDAndTimeStampController (w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	professorID := vars["professorID"]
+	beginSchool := vars["beginSchool"]
+	endSchool := vars["endSchool"]
+
+	profID, err := strconv.Atoi(professorID)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	layout := "01/02/2006 3:04:05 PM"
+	beginSchool = "09/01/" + beginSchool + " 0:00:00 AM"
+	endSchool = "08/31/" + endSchool + " 0:00:00 AM"
+
+	beginTime, err := time.Parse(layout, beginSchool)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	endTime, err := time.Parse(layout, endSchool)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	timeStart := beginTime.UTC().Unix()
+	timeEnd := endTime.UTC().Unix()
+
+	info, err := GetSubjectAndInfobyProfessorIDAndTimeStamp(component.App.DB, profID, timeStart, timeEnd)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	encodedInfo, err := json.Marshal(info)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(encodedInfo)
+}
+
 func FetchProfessorsBySubjectIDController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	subjectID := vars["ID"]

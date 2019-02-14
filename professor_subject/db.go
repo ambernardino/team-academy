@@ -14,6 +14,15 @@ type ProfessorSubject struct {
 	Date        int64
 }
 
+
+type Information struct {
+	ProfessorID        int    `gorm:"column:id"`
+	ProfessorFirstName string `gorm:"column:first_name"`
+	ProfessorLastName  string `gorm:"column:last_name"`
+	SubjectID        int    `gorm:"column:id"`
+	SubjectName      string `gorm:"column:name"`
+}
+
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(ProfessorSubject{}) {
 		return false, db.CreateTable(ProfessorSubject{}).Error
@@ -43,6 +52,21 @@ func GetSubjectsByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubject,
 }
 
 func GetSubjectsAndInfoByProfessorID(db *gorm.DB, id int) (subjects []subject.Subject, err error) {
-	err = db.Table("professor").Select("subject.id, subject.name, subject.description").Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").Joins("JOIN subject ON subject.id = professor_subject.subject_id").Where(&ProfessorSubject{ProfessorID: id}).Scan(&subjects).Error
+	err = db.Table("professor").Select("subject.id, subject.name, subject.description").
+	Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
+	Joins("JOIN subject ON subject.id = professor_subject.subject_id").
+	Where(&ProfessorSubject{ProfessorID: id}).
+	Scan(&subjects).Error
+	return
+}
+
+
+func GetSubjectAndInfobyProfessorIDAndTimeStamp (db *gorm.DB, id int, BeginningSchoolYear int64, EndingSchoolYear int64) (infos []Information, err error) {
+	err = db.Table("professor").Select("professor.id, professor.first_name, professor.last_name, subject.id, subject.name").
+	Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
+	Joins("JOIN subject ON subject.id = professor_subject.subject_id").
+	Where("professor_subject.professor_id = ? AND professor_subject.date BETWEEN ? AND ?", id, BeginningSchoolYear, EndingSchoolYear).
+	Scan(&infos).Error
+
 	return
 }

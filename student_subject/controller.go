@@ -168,7 +168,7 @@ func FetchSubjectAndInfoByStudentIDAndTimeStampController(w http.ResponseWriter,
 
 	layout := "01/02/2006 3:04:05 PM"
 	beginSchool = "09/01/" + beginSchool + " 0:00:00 AM"
-	endSchool = "07/31/" + endSchool + " 0:00:00 AM"
+	endSchool = "08/31/" + endSchool + " 0:00:00 AM"
 
 	beginTime, err := time.Parse(layout, beginSchool)
 	if err != nil {
