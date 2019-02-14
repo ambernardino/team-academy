@@ -42,7 +42,7 @@ func main() {
 	r.HandleFunc("/student/{studentID}/", student.DeleteStudentController).Methods("DELETE")
 
 	//student subject
-	r.HandleFunc("/student/{studentID}/subjects/", student_subject.FetchSubjectsByStudentIDController).Methods("GET")
+	r.HandleFunc("/student/{studentID}/subject/", student_subject.FetchSubjectsByStudentIDController).Methods("GET")
 	r.HandleFunc("/student/{studentID}/info/", student_subject.FetchSubjectAndInfoByStudentIDController).Methods("GET")
 	r.HandleFunc("/subject/{subjectID}/students/", student_subject.FetchStudentsBySubjectIDController).Methods("GET")
 	r.HandleFunc("/subject/{subjectID}/{studentID}/", student_subject.AddStudentToSubjectController).Methods("POST")
