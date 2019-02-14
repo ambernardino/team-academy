@@ -19,6 +19,7 @@ import (
 )
 
 func main() {
+	fmt.Println("Creating and populating database...")
 	err := component.StartDB()
 	if err != nil {
 		fmt.Println(err)

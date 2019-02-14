@@ -2,6 +2,7 @@ package grade
 
 import (
 	"fmt"
+	"team-academy/component"
 	"team-academy/student"
 	"team-academy/student_subject"
 
@@ -9,6 +10,7 @@ import (
 )
 
 type Grade struct {
+	ID        int    `gorm:"AUTO_INCREMENT"`
 	SubjectID int    `json:"subject_id,omitempty"`
 	StudentID int    `json:"student_id,omitempty"`
 	Rank      string `json:"rank,omitempty"`
@@ -31,12 +33,23 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func GiveGrade(db *gorm.DB, grade Grade) (err error) {
-
-	_, err = db.Table("student").Select("student.id, student_subject.subject_id").Joins("JOIN student_subject ON student_subject.student_id = student.id").Where(&student_subject.StudentSubject{SubjectID: grade.SubjectID}).Rows()
+	_, err = student_subject.GetStudentSubject(db, grade.StudentID, grade.SubjectID)
 	if err != nil {
-		fmt.Println(err)
+		err = component.ErrStudentNotInSubject
 		return
 	}
+
+	rows, err := db.Table("grade").Select("grade.subject_id, grade.student_id").Joins("JOIN student ON grade.student_id = student.id").Joins("JOIN subject ON grade.subject_id = subject.id").Joins("JOIN student_subject ON grade.student_id = student_subject.student_id AND grade.subject_id = student_subject.subject_id").Where(&Grade{StudentID: grade.StudentID, SubjectID: grade.SubjectID}).Rows()
+	if err != nil {
+		return
+	}
+
+	defer rows.Close()
+	if rows.Next() {
+		err = component.ErrGradeAlreadyGiven
+		return
+	}
+
 	return db.Save(&grade).Error
 }
 
@@ -71,4 +84,8 @@ func GetGradeBySubjectID(db *gorm.DB, ID int) (grades []Grade, err error) {
 
 func UpdateGrade(db *gorm.DB, grade Grade) (err error) {
 	return db.Model(&Grade{}).Where(&Grade{StudentID: grade.StudentID, SubjectID: grade.SubjectID}).Update(grade).Error
+}
+
+func DeleteGrade(db *gorm.DB, id int) (err error) {
+	return db.Delete(&Grade{ID: id}).Error
 }
