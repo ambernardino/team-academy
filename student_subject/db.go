@@ -73,12 +73,12 @@ func GetStudentsBySubjectID(db *gorm.DB, id int) (students []StudentSubject, err
 	return
 }
 
-func GetSubjectAndInfoByStudentID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student").Select("student.id, student.first_name, student.last_name, subject.id, subject.name").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&infos).Error
+func GetSubjectsAndInfoByStudentID(db *gorm.DB, id int) (subjects []subject.Subject, err error) {
+	err = db.Table("student").Select("subject.id, subject.name, subject.description").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: id}).Scan(&subjects).Error
 	return
 }
 
 func GetStudentAndInfoBySubjectID(db *gorm.DB, id int) (infos []Information, err error) {
-	err = db.Table("student_subject").Select("student_subject.student_id, student_subject.subject_id, student.first_name, student.last_name, subject.name").Joins("JOIN student ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{SubjectID: id}).Scan(&infos).Error
-	return
+    err = db.Table("student_subject").Select("student_subject.student_id, student.first_name, student.last_name, student_subject.subject_id, subject.name").Joins("JOIN student ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{SubjectID: id}).Scan(&infos).Error
+    return
 }
