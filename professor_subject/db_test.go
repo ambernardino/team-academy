@@ -34,7 +34,7 @@ func Test_AddProfessorToSubject(t *testing.T) {
 	}
 
 	// Perform
-	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID)
+	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID, 666)
 	if err != nil {
 		t.Error(err)
 		return
@@ -89,7 +89,7 @@ func Test_AddProfessorToNonExistantSubject(t *testing.T) {
 	}
 
 	// Perform
-	err = AddProfessorToSubject(db, newProfessor.ID, 666)
+	err = AddProfessorToSubject(db, newProfessor.ID, 666, 666)
 	if err == nil {
 		t.Error(err)
 		return
@@ -138,7 +138,7 @@ func Test_AddNonExistantProfessorToSubject(t *testing.T) {
 	}
 
 	// Perform
-	err = AddProfessorToSubject(db, 666, newSubject.ID)
+	err = AddProfessorToSubject(db, 666, newSubject.ID, 666)
 	if err == nil {
 		t.Error(err)
 		return
@@ -193,7 +193,7 @@ func Test_AddRepeatedProfessorToSubject(t *testing.T) {
 		return
 	}
 
-	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID)
+	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID, 666)
 	if err != nil {
 		t.Error(err)
 		return
@@ -206,7 +206,7 @@ func Test_AddRepeatedProfessorToSubject(t *testing.T) {
 	}
 
 	// Perform
-	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID)
+	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID, 666)
 	if err == nil {
 		t.Error(err)
 		return
@@ -267,7 +267,7 @@ func Test_RemoveProfessorFromSubject(t *testing.T) {
 		return
 	}
 
-	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID)
+	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID, 666)
 	if err != nil {
 		t.Error(err)
 		return
@@ -331,7 +331,7 @@ func Test_GetProfessorSubject(t *testing.T) {
 		return
 	}
 
-	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID)
+	err = AddProfessorToSubject(db, newProfessor.ID, newSubject.ID, 666)
 	if err != nil {
 		t.Error(err)
 		return

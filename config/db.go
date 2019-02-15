@@ -8,6 +8,7 @@ import (
 	"team-academy/department"
 	"team-academy/grade"
 	"team-academy/professor"
+	"team-academy/professor_shift"
 	"team-academy/professor_subject"
 	"team-academy/schedule"
 	"team-academy/shift"
@@ -61,6 +62,11 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	}
 
 	existsShiftTable, err := shift.CreateTableIfNotExists(db)
+	if err != nil {
+		return
+	}
+
+	existsProfessorShiftTable, err := professor_shift.CreateTableIfNotExists(db)
 	if err != nil {
 		return
 	}
@@ -308,7 +314,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 			for j := 1; j <= 33; j++ {
 				add := randomInt(0, 9)
 				if add >= 7 {
-					err = professor_subject.AddProfessorToSubject(db, i, j, int64(randomInt(1420070400, 1546300800)))
+					err = professor_subject.AddProfessorToSubject(db, i, j, int64(randomInt(220924800, 1451520000)))
 					if err != nil {
 						return
 					}
@@ -336,9 +342,6 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 			for j := 1; j <= 33; j++ {
 				newGrade := grade.Grade{StudentID: i, SubjectID: j, Rank: randomGrade(0.0, 20.0), Date: int64(randomInt(1420070400, 1546300800))}
 				grade.GiveGrade(db, newGrade)
-				if err != nil {
-					return
-				}
 			}
 		}
 	}
@@ -358,8 +361,8 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	}
 
 	if !existsClassroomTable {
-		for i := 1; i <= 2; i++ {
-			newClassroom := classroom.Classroom{Name: strconv.Itoa(i), DepartmentID: i}
+		for i := 1; i <= 3; i++ {
+			newClassroom := classroom.Classroom{Name: strconv.Itoa(i), DepartmentID: 1}
 			err = classroom.CreateClassroom(db, newClassroom)
 			if err != nil {
 				return
@@ -368,8 +371,8 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	}
 
 	if !existsShiftTable {
-		for i := 1; i <= 11; i++ {
-			newShift := shift.Shift{SubjectID: randomInt(1, 11), ClassroomID: randomInt(1, 24), Type: randomShiftType(), ShiftNum: randomInt(1, 5)}
+		for i := 1; i <= 33; i++ {
+			newShift := shift.Shift{SubjectID: i, ClassroomID: randomInt(1, 4), Type: randomShiftType(), ShiftNum: randomInt(1, 10)}
 			err = shift.CreateShift(db, newShift)
 			if err != nil {
 				return
@@ -377,9 +380,23 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 		}
 	}
 
+	if !existsProfessorShiftTable {
+		for i := 1; i <= 33; i++ {
+			err = professor_shift.AddProfessorToShift(db, randomInt(1, 11), i)
+			if err != nil {
+				return
+			}
+		}
+	}
+
 	if !existsStudentShiftTable {
-		for i := 1; i <= 10; i++ {
-			err = student_shift.AddStudentToShift(db, randomInt(1, 11), randomInt(1, 11))
+		for i := 1; i <= 33; i++ {
+			err = student_shift.AddStudentToShift(db, randomInt(1, 5), i)
+			if err != nil {
+				return
+			}
+
+			err = student_shift.AddStudentToShift(db, randomInt(5, 11), i)
 			if err != nil {
 				return
 			}
@@ -391,7 +408,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 			newSchedule := schedule.Schedule{SubjectID: randomInt(1, 11), ShiftID: randomInt(1, 14), Weekday: randomInt(0, 6), StartTime: 28800, EndTime: 36600}
 			err = schedule.CreateSchedule(db, newSchedule)
 			if err != nil {
-				return
+
 			}
 		}
 	}
@@ -413,7 +430,7 @@ func randomFirstName() string {
 		"Ana", "Maria", "Beatriz", "Mariana", "Inês",
 		"Joana", "Carolina", "Catarina", "Sara", "Daniela"}
 
-	return nameList[randomInt(0, len(nameList)-1)]
+	return nameList[randomInt(0, len(nameList))]
 }
 
 func randomLastName() string {
@@ -426,7 +443,7 @@ func randomLastName() string {
 		"Coelho", "Duarte", "Cunha", "Tavares", "Ramos",
 		"Cruz", "Neves", "Reis", "Freitas", "Araújo"}
 
-	return nameList[randomInt(0, len(nameList)-1)]
+	return nameList[randomInt(0, len(nameList))]
 }
 
 func generateProfessorEmail(id int, firstName, lastName string) string {

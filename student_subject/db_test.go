@@ -12,6 +12,10 @@ import (
 )
 
 func Test_AddStudentToSubject(t *testing.T) {
+	// Given
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
 		return
 	}
 
@@ -29,7 +33,7 @@ func Test_AddStudentToSubject(t *testing.T) {
 	}
 
 	// Perform
-	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID, 666)
 	if err != nil {
 		t.Error(err)
 		return
@@ -69,6 +73,10 @@ func Test_AddStudentToSubject(t *testing.T) {
 }
 
 func Test_AddStudentToNonExistantSubject(t *testing.T) {
+	// Given
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
 		return
 	}
 
@@ -79,7 +87,7 @@ func Test_AddStudentToNonExistantSubject(t *testing.T) {
 	}
 
 	// Perform
-	err = AddStudentToSubject(db, newStudent.ID, 666)
+	err = AddStudentToSubject(db, newStudent.ID, 666, 666)
 	if err == nil {
 		t.Error(err)
 		return
@@ -128,7 +136,7 @@ func Test_AddNonExistantStudentToSubject(t *testing.T) {
 	}
 
 	// Perform
-	err = AddStudentToSubject(db, 666, newSubject.ID)
+	err = AddStudentToSubject(db, 666, newSubject.ID, 666)
 	if err == nil {
 		t.Error(err)
 		return
@@ -183,7 +191,7 @@ func Test_AddRepeatedStudentToSubject(t *testing.T) {
 		return
 	}
 
-	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID, 666)
 	if err != nil {
 		t.Error(err)
 		return
@@ -196,7 +204,7 @@ func Test_AddRepeatedStudentToSubject(t *testing.T) {
 	}
 
 	// Perform
-	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID, 666)
 	if err == nil {
 		t.Error(err)
 		return
@@ -235,6 +243,11 @@ func Test_AddRepeatedStudentToSubject(t *testing.T) {
 	return
 }
 
+func Test_RemoveStudentFromSubject(t *testing.T) {
+	// Given
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
 		return
 	}
 
@@ -242,51 +255,6 @@ func Test_AddRepeatedStudentToSubject(t *testing.T) {
 	err = student.CreateStudent(db, newStudent)
 	if err != nil {
 		t.Error(err)
-	}
-
-	newSubject := subject.Subject{ID: 666, Name: "Test", Description: "Test"}
-	err = subject.CreateSubject(db, newSubject)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-<<<<<<< HEAD
-	time := time.Now().UTC().Unix()
-
-	err = AddStudentToSubject(db, testStudent.ID, testSubject.ID, time)
-=======
-	// Perform
-	}
-
-		t.Error("StudentSubject not properly removed")
-		return
-
-		return
-	}
-
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	err = student.DeleteStudent(db, newStudent.ID)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	return
-}
-
-	if err != nil {
-		t.Error(err)
 		return
 	}
 
@@ -294,20 +262,29 @@ func Test_AddRepeatedStudentToSubject(t *testing.T) {
 	err = subject.CreateSubject(db, newSubject)
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
-	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID)
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Perform
-	fetchedStudentSubject, err := GetStudentSubject(db, newStudent.ID, newSubject.ID)
+	err = AddStudentToSubject(db, newStudent.ID, newSubject.ID, 666)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
+	// Perform
+	err = RemoveStudentFromSubject(db, newStudent.ID, newSubject.ID)
+
+	// Assert
+	if err != nil {
+		t.Error("Can't remove student from subject")
+		return
+	}
+
+	_, err = GetStudentSubject(db, newStudent.ID, newSubject.ID)
+	if err == nil {
+		t.Error(err)
+		return
+	}
 
 	err = RemoveStudentFromSubject(db, newStudent.ID, newSubject.ID)
 	if err != nil {
@@ -315,6 +292,7 @@ func Test_AddRepeatedStudentToSubject(t *testing.T) {
 		return
 	}
 
+	err = subject.DeleteSubject(db, newSubject.ID)
 	if err != nil {
 		t.Error(err)
 		return
