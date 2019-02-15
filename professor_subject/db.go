@@ -2,6 +2,7 @@ package professor_subject
 
 import (
 	"team-academy/component"
+	"team-academy/professor"
 
 	"team-academy/subject"
 
@@ -23,9 +24,14 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int, date int64) (err error) {
-	
+	_, err = professor.GetProfessorByID(db, professorID)
+	if err != nil {
+		err = component.ErrProfessorDoesntExist
+		return
+	}
 	_, err = subject.GetSubjectByID(db, subjectID)
 	if err != nil {
+		err = component.ErrSubjectDoesntExist
 		return
 	}
 
@@ -64,20 +70,19 @@ func GetSubjectsByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubject,
 
 func GetSubjectsAndInfoByProfessorID(db *gorm.DB, id int) (subjects []subject.Subject, err error) {
 	err = db.Table("professor").Select("subject.id, subject.name, subject.description").
-	Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
-	Joins("JOIN subject ON subject.id = professor_subject.subject_id").
-	Where(&ProfessorSubject{ProfessorID: id}).
-	Scan(&subjects).Error
+		Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
+		Joins("JOIN subject ON subject.id = professor_subject.subject_id").
+		Where(&ProfessorSubject{ProfessorID: id}).
+		Scan(&subjects).Error
 	return
 }
 
-
-func GetSubjectAndInfobyProfessorIDAndTimeStamp (db *gorm.DB, id int, BeginningSchoolYear int64, EndingSchoolYear int64) (subjects []subject.Subject, err error) {
+func GetSubjectAndInfobyProfessorIDAndTimeStamp(db *gorm.DB, id int, BeginningSchoolYear int64, EndingSchoolYear int64) (subjects []subject.Subject, err error) {
 	err = db.Table("professor").Select("subject.id, subject.name, subject.description").
-	Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
-	Joins("JOIN subject ON subject.id = professor_subject.subject_id").
-	Where("professor_subject.professor_id = ? AND professor_subject.date BETWEEN ? AND ?", id, BeginningSchoolYear, EndingSchoolYear).
-	Scan(&subjects).Error
+		Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
+		Joins("JOIN subject ON subject.id = professor_subject.subject_id").
+		Where("professor_subject.professor_id = ? AND professor_subject.date BETWEEN ? AND ?", id, BeginningSchoolYear, EndingSchoolYear).
+		Scan(&subjects).Error
 
 	return
 }

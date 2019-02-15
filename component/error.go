@@ -9,11 +9,14 @@ type TeamAcademyError struct {
 	msg  string
 }
 
+var ErrShiftDoesntExist = &TeamAcademyError{http.StatusConflict, "Shift doesn't exist"}
+var ErrClassroomDoesntExist = &TeamAcademyError{http.StatusConflict, "Classroom doesn't exist"}
 var ErrSubjectAlreadyExists = &TeamAcademyError{http.StatusConflict, "A subject with that name already exists"}
+var ErrSubjectDoesntExist = &TeamAcademyError{http.StatusConflict, "Subject doesn't exist"}
 var ErrStudentAlreadyInSubject = &TeamAcademyError{http.StatusConflict, "Student is already registered in subject"}
 var ErrMissingParameters = &TeamAcademyError{http.StatusConflict, "Missing parameters"}
 var ErrProfessorAlreadyInSubject = &TeamAcademyError{http.StatusConflict, "Professor is already registered in subject"}
-var ErrProfessorAlreadyInShift = &TeamAcademyError{http.StatusConflict, "Professor is already registered in the shift"}
+var ErrProfessorAlreadyInShift = &TeamAcademyError{http.StatusConflict, "A Professor is already registered in this shift"}
 var ErrProfessorNotInSubject = &TeamAcademyError{http.StatusConflict, "Professor isn't registered in the subject"}
 var ErrStudentNotInSubject = &TeamAcademyError{http.StatusConflict, "Student isn't registered in the subject"}
 var ErrProfessorDoesntExist = &TeamAcademyError{http.StatusConflict, "Professor not enroled in school"}

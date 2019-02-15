@@ -2,6 +2,7 @@ package student_subject
 
 import (
 	"team-academy/component"
+	"team-academy/student"
 
 	"team-academy/subject"
 
@@ -31,7 +32,22 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func AddStudentToSubject(db *gorm.DB, studentID, subjectID int, date int64) (err error) {
+	_, err = student.GetStudentByID(db, studentID)
+	if err != nil {
+		err = component.ErrStudentDoesntExist
+		return
+	}
+
+	_, err = subject.GetSubjectByID(db, subjectID)
+	if err != nil {
+		err = component.ErrSubjectDoesntExist
+		return
+	}
+
 	rows, err := db.Table("student").Select("student_subject.student_id, student_subject.subject_id").Joins("JOIN student_subject ON student.id = student_subject.student_id").Joins("JOIN subject ON subject.id = student_subject.subject_id").Where(&StudentSubject{StudentID: studentID, SubjectID: subjectID}).Rows()
+	if err != nil {
+		return
+	}
 
 	defer rows.Close()
 	if rows.Next() {

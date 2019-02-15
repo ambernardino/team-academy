@@ -1,17 +1,19 @@
 package shift
 
 import (
+	"team-academy/classroom"
 	"team-academy/component"
+	"team-academy/subject"
 
 	"github.com/jinzhu/gorm"
 )
 
 type Shift struct {
 	ID          int `gorm:"AUTO_INCREMENT"`
-	SubjectID   int
-	ClassroomID int
 	Type        string
 	ShiftNum    int
+	SubjectID   int
+	ClassroomID int
 }
 
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
@@ -22,6 +24,18 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func CreateShift(db *gorm.DB, shift Shift) (err error) {
+	_, err = classroom.GetClassroomByID(db, shift.ClassroomID)
+	if err != nil {
+		err = component.ErrClassroomDoesntExist
+		return
+	}
+
+	_, err = subject.GetSubjectByID(db, shift.SubjectID)
+	if err != nil {
+		err = component.ErrSubjectDoesntExist
+		return
+	}
+
 	return db.Save(&shift).Error
 }
 
