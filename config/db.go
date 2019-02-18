@@ -372,7 +372,7 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 
 	if !existsShiftTable {
 		for i := 1; i <= 33; i++ {
-			newShift := shift.Shift{SubjectID: i, ClassroomID: randomInt(1, 4), Type: randomShiftType(), ShiftNum: randomInt(1, 10)}
+			newShift := shift.Shift{SubjectID: i, ClassroomID: randomInt(1, 4), Type: randomShiftType(), ShiftNum: randomInt(1, 11)}
 			err = shift.CreateShift(db, newShift)
 			if err != nil {
 				return
@@ -404,11 +404,12 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	}
 
 	if !existsScheduleTable {
-		for i := 1; i <= 14; i++ {
-			newSchedule := schedule.Schedule{SubjectID: randomInt(1, 11), ShiftID: randomInt(1, 14), Weekday: randomInt(0, 6), StartTime: 28800, EndTime: 36600}
+		for i := 1; i <= 33; i++ {
+			startTime, endTime := generateScheduleTime()
+			newSchedule := schedule.Schedule{ShiftID: i, Weekday: randomInt(0, 7), StartTime: startTime, EndTime: endTime}
 			err = schedule.CreateSchedule(db, newSchedule)
 			if err != nil {
-
+				return
 			}
 		}
 	}
@@ -462,4 +463,17 @@ func randomGrade(min, max float64) string {
 func randomShiftType() string {
 	types := [3]string{"T", "TP", "P"}
 	return types[randomInt(0, len(types))]
+}
+
+func generateScheduleTime() (startTime, endTime int64) {
+	times := []int64{28800, 30600, 32400, 34200, 36000, 37800, 39600, 41400, 43200, 45000, 46800,
+		48600, 50400, 52200, 54000, 55800, 57600, 59400, 61200, 63000, 64800, 66600,
+		68400, 70200, 72000, 73800, 75600, 77400, 79200, 81000, 82800, 84600, 86400}
+
+	for endTime <= startTime {
+		startTime = times[randomInt(0, len(times))]
+		endTime = times[randomInt(0, len(times))]
+	}
+
+	return
 }

@@ -2,13 +2,13 @@ package schedule
 
 import (
 	"team-academy/component"
+	"team-academy/shift"
 
 	"github.com/jinzhu/gorm"
 )
 
 type Schedule struct {
 	ID        int `gorm:"AUTO_INCREMENT"`
-	SubjectID int
 	ShiftID   int
 	Weekday   int
 	StartTime int64
@@ -23,6 +23,29 @@ func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 }
 
 func CreateSchedule(db *gorm.DB, schedule Schedule) (err error) {
+	_, err = shift.GetShiftByID(db, schedule.ShiftID)
+	if err != nil {
+		err = component.ErrShiftDoesntExist
+		return
+	}
+
+	if schedule.Weekday < 0 || schedule.Weekday > 6 {
+		err = component.ErrWeekdayDoesntExist
+		return
+	}
+
+	// 28800s = 8h, 82800s = 23h
+	if schedule.StartTime < 28800 || schedule.StartTime > 82800 {
+		err = component.ErrInvalidStartTime
+		return
+	}
+
+	// 32400s = 9h, 86400s = 24h
+	if schedule.EndTime < 32400 || schedule.EndTime > 86400 {
+		err = component.ErrInvalidEndTime
+		return
+	}
+
 	return db.Save(&schedule).Error
 }
 

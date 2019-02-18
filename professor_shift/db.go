@@ -34,7 +34,7 @@ func AddProfessorToShift(db *gorm.DB, professorID, shiftID int) (err error) {
 		return
 	}
 
-	rows, err := db.Table("professor_shift").Select("professor_id, subject_id").Joins("JOIN professor ON professor_shift.professor_id = professor.id").Joins("JOIN shift ON professor_shift.shift_id = shift.id").Where(&ProfessorShift{ShiftID: shiftID}).Rows()
+	rows, err := db.Table("professor_shift").Select("professor_id, subject_id").Joins("JOIN professor ON professor_shift.professor_id = professor.id").Joins("JOIN shift ON professor_shift.shift_id = shift.id").Where(&ProfessorShift{ShiftID: shiftID, ProfessorID: professorID}).Rows()
 	if err != nil {
 		return
 	}
