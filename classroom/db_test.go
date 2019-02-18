@@ -100,6 +100,61 @@ func Test_CreateClassroomOnNonExistantDepartment(t *testing.T) {
 	return
 }
 
+func Test_UpdateClassroom(t *testing.T) {
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newDepartment := department.Department{ID: 666, Name: "Test"}
+	err = department.CreateDepartment(db, newDepartment)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newClassroom := Classroom{ID: 666, Name: "Test", DepartmentID: newDepartment.ID}
+
+	err = CreateClassroom(db, newClassroom)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	updatedClassroom := Classroom{ID: 666, Name: "Updated", DepartmentID: newDepartment.ID}
+	err = UpdateClassroom(db, updatedClassroom)
+	if err != nil {
+		t.Error("Coudln't update classroom")
+		return
+	}
+
+	fetchedClassroom, err := GetClassroomByID(db, newClassroom.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if fetchedClassroom != updatedClassroom {
+		t.Errorf("Expected %v, got %v", updatedClassroom, fetchedClassroom)
+		return
+	}
+
+	err = DeleteClassroom(db, newClassroom.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = department.DeleteDepartment(db, newDepartment.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	return
+}
+
 func Test_DeleteClassroom(t *testing.T) {
 	// Given
 	db, err := StartDB()

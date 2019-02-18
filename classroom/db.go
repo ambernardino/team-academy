@@ -30,11 +30,31 @@ func CreateClassroom(db *gorm.DB, classroom Classroom) (err error) {
 	return db.Save(&classroom).Error
 }
 
+func UpdateClassroom(db *gorm.DB, classroom Classroom) (err error) {
+	_, err = GetClassroomByID(db, classroom.ID)
+	if err != nil {
+		err = component.ErrClassroomDoesntExist
+		return
+	}
+
+	if classroom.ID <= 0 {
+		err = component.ErrMissingParameters
+		return
+	}
+
+	return db.Model(&Classroom{}).Updates(&classroom).Error
+}
+
 func DeleteClassroom(db *gorm.DB, id int) (err error) {
 	return db.Delete(&Classroom{ID: id}).Error
 }
 
 func GetClassroomByID(db *gorm.DB, id int) (classroom Classroom, err error) {
 	err = db.First(&classroom, &Classroom{ID: id}).Error
+	return
+}
+
+func GetAllClassrooms(db *gorm.DB) (classrooms []Classroom, err error) {
+	err = db.Find(&classrooms).Error
 	return
 }

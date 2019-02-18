@@ -45,6 +45,47 @@ func Test_CreateDepartment(t *testing.T) {
 	return
 }
 
+func Test_UpdateDepartment(t *testing.T) {
+	db, err := StartDB()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	newDepartment := Department{ID: 666, Name: "Test"}
+	err = CreateDepartment(db, newDepartment)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	updatedDepartment := Department{ID: 666, Name: "Updated"}
+	err = UpdateDepartment(db, updatedDepartment)
+	if err != nil {
+		t.Error("Coudln't update department")
+		return
+	}
+
+	fetchedDepartment, err := GetDepartmentByID(db, newDepartment.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if fetchedDepartment != updatedDepartment {
+		t.Errorf("Expected %v, got %v", updatedDepartment, fetchedDepartment)
+		return
+	}
+
+	err = DeleteDepartment(db, newDepartment.ID)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	return
+}
+
 func Test_DeleteDepartment(t *testing.T) {
 	// Given
 	db, err := StartDB()

@@ -11,6 +11,7 @@ import (
 
 func CreateSubjectController(w http.ResponseWriter, r *http.Request) {
 	var subject Subject
+
 	err := json.NewDecoder(r.Body).Decode(&subject)
 	if component.ControllerError(w, err, component.ErrUnmarshallingJSON) {
 		return
