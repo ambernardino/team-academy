@@ -9,7 +9,11 @@ type TeamAcademyError struct {
 	msg  string
 }
 
+var ErrInvalidStartTime = &TeamAcademyError{http.StatusConflict, "Shift can't begin before 8 am"}
+var ErrInvalidEndTime = &TeamAcademyError{http.StatusConflict, "Shift can't end after 12 am"}
+var ErrInvalidDuration = &TeamAcademyError{http.StatusConflict, "Schedule can't last less than 1 hour"}
 var ErrShiftDoesntExist = &TeamAcademyError{http.StatusConflict, "Shift doesn't exist"}
+var ErrWeekdayDoesntExist = &TeamAcademyError{http.StatusConflict, "Invalid weekday"}
 var ErrClassroomDoesntExist = &TeamAcademyError{http.StatusConflict, "Classroom doesn't exist"}
 var ErrSubjectAlreadyExists = &TeamAcademyError{http.StatusConflict, "A subject with that name already exists"}
 var ErrSubjectDoesntExist = &TeamAcademyError{http.StatusConflict, "Subject doesn't exist"}
