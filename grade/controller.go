@@ -1,103 +1,103 @@
 package grade
 
 import (
-    "encoding/json"
-    "net/http"
-    "strconv"
-    "team-academy/component"
-    "time"
+	"encoding/json"
+	"net/http"
+	"strconv"
+	"team-academy/component"
+	"time"
 
-    "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 )
 
 func CreateGradeController(w http.ResponseWriter, r *http.Request) {
-    var g Grade
-    err := json.NewDecoder(r.Body).Decode(&g)
-    if err != nil {
-        return
-    }
-    err = GiveGrade(component.App.DB, g)
-    if err != nil {
-        return
-    }
-    w.Write([]byte("Grade Added"))
+	var g Grade
+	err := json.NewDecoder(r.Body).Decode(&g)
+	if err != nil {
+		return
+	}
+	err = GiveGrade(component.App.DB, g)
+	if err != nil {
+		return
+	}
+	w.Write([]byte("Grade Added"))
 }
 
 func UpdateGradeController(w http.ResponseWriter, r *http.Request) {
-    var g Grade
-    err := json.NewDecoder(r.Body).Decode(&g)
-    if err != nil {
-        return
-    }
-    err = UpdateGrade(component.App.DB, g)
-    if err != nil {
-        return
-    }
-    w.Write([]byte("Grade Updated"))
+	var g Grade
+	err := json.NewDecoder(r.Body).Decode(&g)
+	if err != nil {
+		return
+	}
+	err = UpdateGrade(component.App.DB, g)
+	if err != nil {
+		return
+	}
+	w.Write([]byte("Grade Updated"))
 }
 
 func FetchGradeByStudentController(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    ID := vars["ID"]
-    id, err := strconv.Atoi(ID)
-    if err != nil {
-        return
-    }
-    g, err := GetGradeByStudentID(component.App.DB, id)
-    if err != nil {
-        w.Write([]byte(err.Error()))
-        return
-    }
-    list, err := json.Marshal(g)
-    if err != nil {
-        w.Write([]byte(err.Error()))
-        return
-    }
-    w.Write(list)
+	vars := mux.Vars(r)
+	ID := vars["ID"]
+	id, err := strconv.Atoi(ID)
+	if err != nil {
+		return
+	}
+	g, err := GetGradeByStudentID(component.App.DB, id)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	list, err := json.Marshal(g)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(list)
 }
 
 func FetchGradeBySubjectController(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    ID := vars["ID"]
-    id, err := strconv.Atoi(ID)
-    if err != nil {
-        return
-    }
-    g, err := GetGradeBySubjectID(component.App.DB, id)
-    if err != nil {
-        w.Write([]byte(err.Error()))
-        return
-    }
-    list, err := json.Marshal(g)
-    if err != nil {
-        w.Write([]byte(err.Error()))
-        return
-    }
-    w.Write(list)
+	vars := mux.Vars(r)
+	ID := vars["ID"]
+	id, err := strconv.Atoi(ID)
+	if err != nil {
+		return
+	}
+	g, err := GetGradeBySubjectID(component.App.DB, id)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	list, err := json.Marshal(g)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(list)
 }
 
 func FetchStudentsGradesController(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    studentID := vars["studentID"]
-    id, err := strconv.Atoi(studentID)
-    if err != nil {
-        return
-    }
-    g, err := GetStudentsGrades(component.App.DB, id)
-    if err != nil {
-        w.Write([]byte(err.Error()))
-        return
-    }
-    list, err := json.Marshal(g)
-    if err != nil {
-        w.Write([]byte(err.Error()))
-        return
-    }
-    w.Write(list)
+	vars := mux.Vars(r)
+	studentID := vars["studentID"]
+	id, err := strconv.Atoi(studentID)
+	if err != nil {
+		return
+	}
+	g, err := GetStudentsGrades(component.App.DB, id)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	list, err := json.Marshal(g)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(list)
 }
 
-func FetchStudentsGradesbyTimeStampAndStudentID (w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
+func FetchStudentsGradesbyTimeStampAndStudentID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 	studentID := vars["studentID"]
 	beginSchool := vars["beginSchool"]
 	endSchool := vars["endSchool"]
@@ -139,16 +139,3 @@ func FetchStudentsGradesbyTimeStampAndStudentID (w http.ResponseWriter, r *http.
 	}
 	w.Write(encodedInfo)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
