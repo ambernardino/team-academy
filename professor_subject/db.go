@@ -76,7 +76,7 @@ func GetSubjectsByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubject,
 }
 
 func GetSubjectsAndInfoByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubjectsInfo, err error) {
-	err = db.Raw("select professor.id, subject.id, subject.name, professor_subject.date from subject join professor_subject ON professor_subject.subject_id = subject.id join professor on professor.id = professor_subject.professor_id where  professor.id = ?", id).Scan(&subjects).Error
+	err = db.Raw("SELECT professor_subject.professor_id, professor_subject.subject_id, subject.name, professor_subject.date FROM professor_subject JOIN subject ON subject.id = professor_subject.subject_id WHERE professor_subject.professor_id = ?", id).Scan(&subjects).Error
 	return
 }
 
