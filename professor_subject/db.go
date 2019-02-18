@@ -16,6 +16,13 @@ type ProfessorSubject struct {
 	Date        int64
 }
 
+type ProfessorSubjectsInfo struct {
+	ProfessorID int
+	SubjectID   int
+	SubjectName string `gorm:"column:name"`
+	Date        int64
+}
+
 func CreateTableIfNotExists(db *gorm.DB) (exists bool, err error) {
 	if !db.HasTable(ProfessorSubject{}) {
 		return false, db.CreateTable(ProfessorSubject{}).Error
@@ -68,12 +75,8 @@ func GetSubjectsByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubject,
 	return
 }
 
-func GetSubjectsAndInfoByProfessorID(db *gorm.DB, id int) (subjects []subject.Subject, err error) {
-	err = db.Table("professor").Select("subject.id, subject.name, subject.description").
-		Joins("JOIN professor_subject ON professor.id = professor_subject.professor_id").
-		Joins("JOIN subject ON subject.id = professor_subject.subject_id").
-		Where(&ProfessorSubject{ProfessorID: id}).
-		Scan(&subjects).Error
+func GetSubjectsAndInfoByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubjectsInfo, err error) {
+	err = db.Raw("select professor.id, subject.id, subject.name, professor_subject.date from subject join professor_subject ON professor_subject.subject_id = subject.id join professor on professor.id = professor_subject.professor_id where  professor.id = ?", id).Scan(&subjects).Error
 	return
 }
 
