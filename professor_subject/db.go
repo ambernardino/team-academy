@@ -20,6 +20,7 @@ type ProfessorSubjectsInfo struct {
 	ProfessorID int
 	SubjectID   int
 	SubjectName string `gorm:"column:name"`
+	SubjectDescription string `gorm:"column:description"`
 	Date        int64
 }
 
@@ -42,7 +43,11 @@ func AddProfessorToSubject(db *gorm.DB, professorID, subjectID int, date int64) 
 		return
 	}
 
-	rows, err := db.Table("professor_subject").Select("professor_subject.professor_id, professor_subject.subject_id, professor.first_name, professor.last_name, subject.name").Joins("JOIN professor ON professor.id = professor_subject.professor_id").Joins("JOIN subject ON subject.id = professor_subject.subject_id").Where(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID}).Rows()
+	rows, err := db.Table("professor_subject").
+	Select("professor_subject.professor_id, professor_subject.subject_id, professor.first_name, professor.last_name, subject.name").
+	Joins("JOIN professor ON professor.id = professor_subject.professor_id").
+	Joins("JOIN subject ON subject.id = professor_subject.subject_id").
+	Where(&ProfessorSubject{ProfessorID: professorID, SubjectID: subjectID, Date: date}).Rows()
 	if err != nil {
 		return
 	}
@@ -76,7 +81,7 @@ func GetSubjectsByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubject,
 }
 
 func GetSubjectsAndInfoByProfessorID(db *gorm.DB, id int) (subjects []ProfessorSubjectsInfo, err error) {
-	err = db.Raw("select professor.id, subject.id, subject.name, professor_subject.date from subject join professor_subject ON professor_subject.subject_id = subject.id join professor on professor.id = professor_subject.professor_id where  professor.id = ?", id).Scan(&subjects).Error
+	err = db.Raw("SELECT professor_subject.professor_id, professor_subject.subject_id, subject.name, subject.description, professor_subject.date FROM professor_subject JOIN subject ON subject.id = professor_subject.subject_id WHERE professor_subject.professor_id = ?", id).Scan(&subjects).Error
 	return
 }
 
