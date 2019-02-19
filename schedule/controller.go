@@ -11,7 +11,7 @@ import (
 
 func DeleteScheduleController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	scheduleID := vars["scheduleID"]
+	scheduleID := vars["ID"]
 
 	ID, err := strconv.Atoi(scheduleID)
 	if err != nil {
@@ -28,7 +28,7 @@ func DeleteScheduleController(w http.ResponseWriter, r *http.Request) {
 
 func FetchScheduleController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	scheduleID := vars["scheduleID"]
+	scheduleID := vars["ID"]
 
 	ID, err := strconv.Atoi(scheduleID)
 	if err != nil {
