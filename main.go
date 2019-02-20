@@ -98,8 +98,8 @@ func main() {
 	r.HandleFunc("/student/{studentID}/", student.DeleteStudentController).Methods("DELETE")
 
 	//student_shift
-	//r.HandleFunc("/student/{studentID}/shift/{shiftID}/", student_shift.AddStudentToShiftController).Methods("POST")
-	//r.HandleFunc("/student/{studentID}/shift/{shiftID}/", student_shift.RemoveStudentFromShiftController).Methods("DELETE")
+	r.HandleFunc("/student/{studentID}/shift/{shiftID}/", student_shift.AddStudentToShiftController).Methods("POST")
+	r.HandleFunc("/student/{studentID}/shift/{shiftID}/", student_shift.RemoveStudentFromShiftController).Methods("DELETE")
 
 	//student_subject
 	r.HandleFunc("/student/{studentID}/subject/", student_subject.FetchSubjectsByStudentIDController).Methods("GET")
