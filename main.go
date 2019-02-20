@@ -16,6 +16,7 @@ import (
 	"team-academy/student"
 	"team-academy/student_subject"
 	"team-academy/subject"
+	"team-academy/student_shift"
 
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
