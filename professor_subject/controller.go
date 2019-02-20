@@ -32,7 +32,7 @@ func FetchSubjectsByProfessorIDController(w http.ResponseWriter, r *http.Request
 	w.Write(subjectsInfo)
 }
 
-func FetchSubjectAndInfobyProfessorIDAndTimeStampController (w http.ResponseWriter, r *http.Request) {
+func FetchSubjectAndInfobyProfessorIDAndTimeStampController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	professorID := vars["professorID"]
 	beginSchool := vars["beginSchool"]

@@ -28,7 +28,7 @@ func DeleteShiftController(w http.ResponseWriter, r *http.Request) {
 
 func FetchShiftController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	shiftID := vars["shiftID"]
+	shiftID := vars["ID"]
 
 	ID, err := strconv.Atoi(shiftID)
 	if err != nil {
