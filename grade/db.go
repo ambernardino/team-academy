@@ -22,6 +22,7 @@ type StudentGrade struct {
 	StudentLastName  string `gorm:"column:last_name"`
 	SubjectName      string `gorm:"column:name"`
 	SubjectID        int
+	SubjectDescription string `gorm:"column:description"`
 	Rank             string
 	Date             int64
 }
@@ -61,7 +62,7 @@ func GetGradeByStudentIDAndSubjectID(db *gorm.DB, studentID int, subjectID int) 
 
 func GetStudentsGrades(db *gorm.DB, id int) (grades []StudentGrade, err error) {
 	err = db.Table("student").
-		Select("student_subject.student_id, student.first_name, student.last_name, subject.name, student_subject.subject_id, grade.rank, grade.date").
+		Select("student_subject.student_id, student.first_name, student.last_name, subject.name, student_subject.subject_id, subject.description, grade.rank, grade.date").
 		Joins("JOIN student_subject ON student.id = student_subject.student_id").
 		Joins("JOIN subject ON subject.id = student_subject.subject_id").
 		Joins("JOIN grade ON student.id = grade.student_id AND subject.id = grade.subject_id").
