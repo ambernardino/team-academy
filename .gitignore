@@ -3,3 +3,5 @@
 .vscode/settings.json
 vendor/
 res/swagger.json
+main
+res/
