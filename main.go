@@ -38,6 +38,9 @@ func main() {
 
 	r := mux.NewRouter()
 
+	//Redirect main page to swagger docs for now
+	r.HandleFunc("/", RedirectController).Methods("GET")
+	
 	//classroom
 	r.HandleFunc("/classroom/{ID}", classroom.FetchClassroomByIDController).Methods("GET")
 	r.HandleFunc("/classroom/", classroom.FetchAllClassroomsController).Methods("GET")
@@ -125,4 +128,8 @@ func main() {
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		return
 	}
+}
+
+func RedirectController(writer http.ResponseWriter, req *http.Request) {
+	http.Redirect(writer, req, "/swagger-ui/", 302)
 }
