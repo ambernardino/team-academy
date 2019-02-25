@@ -81,7 +81,6 @@ func FetchStudentShiftController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(encodedStudentShift)
-	component.ReturnResponse(w, "Fetch Student Shift")
 }
 
 func FetchShiftsByStudentIDController(w http.ResponseWriter, r *http.Request) {
@@ -104,5 +103,4 @@ func FetchShiftsByStudentIDController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(encodedShifts)
-	component.ReturnResponse(w, "Fetch List of Student's Shifts")
 }
