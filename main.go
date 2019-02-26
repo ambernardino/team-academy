@@ -14,9 +14,9 @@ import (
 	"team-academy/schedule"
 	"team-academy/shift"
 	"team-academy/student"
+	"team-academy/student_shift"
 	"team-academy/student_subject"
 	"team-academy/subject"
-	"team-academy/student_shift"
 
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
@@ -40,7 +40,7 @@ func main() {
 
 	//Redirect main page to swagger docs for now
 	r.HandleFunc("/", RedirectController).Methods("GET")
-	
+
 	//classroom
 	r.HandleFunc("/classroom/{ID}", classroom.FetchClassroomByIDController).Methods("GET")
 	r.HandleFunc("/classroom/", classroom.FetchAllClassroomsController).Methods("GET")
@@ -72,6 +72,8 @@ func main() {
 	r.HandleFunc("/professor/{ID}/", professor.RemoveProfessorController).Methods("DELETE")
 
 	//professor_shift
+	r.HandleFunc("/professor/{professorID}/shift/", professor_shift.FetchShiftsByProfessorIDController).Methods("GET")
+	r.HandleFunc("/professor/{professorID}/shift/{shiftID}/", professor_shift.FetchProfessorShiftController).Methods("GET")
 	r.HandleFunc("/professor/{professorID}/shift/{shiftID}/", professor_shift.AddProfessorToShiftController).Methods("POST")
 	r.HandleFunc("/professor/{professorID}/shift/{shiftID}/", professor_shift.RemoveProfessorFromShiftController).Methods("DELETE")
 
@@ -102,6 +104,8 @@ func main() {
 	r.HandleFunc("/student/{studentID}/", student.DeleteStudentController).Methods("DELETE")
 
 	//student_shift
+	r.HandleFunc("/student/{studentID}/shift/", student_shift.FetchShiftsByStudentIDController).Methods("GET")
+	r.HandleFunc("/student/{studentID}/shift/{shiftID}/", student_shift.FetchStudentShiftController).Methods("GET")
 	r.HandleFunc("/student/{studentID}/shift/{shiftID}/", student_shift.AddStudentToShiftController).Methods("POST")
 	r.HandleFunc("/student/{studentID}/shift/{shiftID}/", student_shift.RemoveStudentFromShiftController).Methods("DELETE")
 
