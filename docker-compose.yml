@@ -17,6 +17,8 @@ services:
       - traefik.port=8080
       - traefik.backend=clip-go
       - traefik.frontend.rule=Host:clip.plicca.com
+    environment:
+      - GOPATH=/home/ec2-user/go/
 networks:
   web:
     external: true
