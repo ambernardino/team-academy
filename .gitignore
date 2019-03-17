@@ -5,3 +5,4 @@ vendor/
 res/swagger.json
 main
 res/
+config/firebase.go

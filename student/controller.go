@@ -124,3 +124,5 @@ func CreateStudentController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+

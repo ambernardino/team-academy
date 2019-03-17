@@ -1,6 +1,7 @@
 package main
 
 import (
+	"team-academy/student_tuiton"
 	"fmt"
 	"net/http"
 	"team-academy/classroom"
@@ -122,6 +123,12 @@ func main() {
 	r.HandleFunc("/subject/{ID}/", subject.FetchSubjectByIDController).Methods("GET")
 	r.HandleFunc("/subject/", subject.FetchAllSubjectsController).Methods("GET")
 	r.HandleFunc("/subject/", subject.CreateSubjectController).Methods("POST")
+
+	//Student tuition
+	r.HandleFunc("/studenttuition/{studentID}/", student_tuiton.FetchStudentTuitionByStudentIDController).Methods("GET")
+	r.HandleFunc("/studenttuition/", student_tuiton.AddStudentTuitionController).Methods("POST")
+	r.HandleFunc("/studenttuition/", student_tuiton.UpdateStudentTuitionController).Methods("PUT")
+	r.HandleFunc("/studenttuition/{studentID}/", student_tuiton.RemoveStudentTuitionController).Methods("DELETE")
 
 	err = config.GenerateSwaggerDocsAndEndpoints(r, "localhost:8080")
 	if err != nil {

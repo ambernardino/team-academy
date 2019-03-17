@@ -15,6 +15,7 @@ import (
 	"team-academy/student"
 	"team-academy/student_shift"
 	"team-academy/student_subject"
+	"team-academy/student_tuiton"
 	"team-academy/subject"
 
 	"github.com/jinzhu/gorm"
@@ -77,6 +78,11 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 	}
 
 	existsScheduleTable, err := schedule.CreateTableIfNotExists(db)
+	if err != nil {
+		return
+	}
+
+	existsStudentTuitionTable, err := student_tuiton.CreateTableIfNotExists(db)
 	if err != nil {
 		return
 	}
@@ -414,6 +420,18 @@ func PopulateDatabase(db *gorm.DB) (err error) {
 		}
 	}
 
+	if !existsStudentTuitionTable {
+		for i := 1; i <= 10; i++ {
+			for j := 1; j <= 3; j++ {
+				newStudentTuition := student_tuiton.StudentTuition{StudentID: i, StudentDebt: randomDebt(100, 1000), Reference: randomReference(11111, 99999), Entity: "10334", Date: int64(randomInt(1420070400, 1546300800))}
+				err = student_tuiton.AddStudentTuition(db, newStudentTuition)
+				if err != nil {
+					return
+				}
+			}
+		}
+	}
+
 	return
 }
 
@@ -458,6 +476,16 @@ func generateStudentEmail(id int, firstName, lastName string) string {
 func randomGrade(min, max float64) string {
 	r := min + rand.Float64()*(max-min)
 	return strconv.FormatFloat(r, 'f', 2, 64)
+}
+
+func randomDebt(min, max float64) string {
+	r := min + rand.Float64()*(max-min)
+	return strconv.FormatFloat(r, 'f', 2, 64)
+}
+
+func randomReference(min, max int64) string {
+	r := min + rand.Int63n(max)
+	return strconv.FormatInt(r, 10)
 }
 
 func randomShiftType() string {
