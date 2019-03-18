@@ -2,38 +2,53 @@
 
 
 [[projects]]
+  digest = "1:a3c01bbe8766cbce019cdb900aa51460a6f7bd4266a18d80722dc92297302bc3"
   name = "github.com/gorilla/mux"
   packages = ["."]
+  pruneopts = ""
   revision = "a7962380ca08b5a188038c69871b8d3fbdf31e89"
   version = "v1.7.0"
 
 [[projects]]
+  digest = "1:7d4958827c8f2d9d31e24d9a3a52194eb179f77d854692e57954c516ecf76748"
   name = "github.com/jinzhu/gorm"
   packages = ["."]
+  pruneopts = ""
   revision = "472c70caa40267cb89fd8facb07fe6454b578626"
   version = "v1.9.2"
 
 [[projects]]
   branch = "master"
+  digest = "1:d9a7385b84d8187fd94e0357045c6fa1147ca94caa56fdd539336c7c102fc728"
   name = "github.com/jinzhu/inflection"
   packages = ["."]
+  pruneopts = ""
   revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
+  digest = "1:8bbdb2b3dce59271877770d6fe7dcbb8362438fa7d2e1e1f688e4bf2aac72706"
   name = "github.com/mattn/go-sqlite3"
   packages = ["."]
+  pruneopts = ""
   revision = "c7c4067b79cc51e6dfdcef5c702e74b1e0fa7c75"
   version = "v1.10.0"
 
 [[projects]]
+  digest = "1:44a418ce1c2608cf6303615b80733fa1c5223ab05eb67a2ec064c46321e150fd"
   name = "github.com/plicca/summerfish-swagger"
   packages = ["."]
+  pruneopts = ""
   revision = "e8d7ac5b535dbed8cf08336245f40b8d93f6c19c"
   version = "1.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "eadb359969c0fc51ced6849d9013e7cc300a0df6c312d7d4204c9205697562cf"
+  input-imports = [
+    "github.com/gorilla/mux",
+    "github.com/jinzhu/gorm",
+    "github.com/mattn/go-sqlite3",
+    "github.com/plicca/summerfish-swagger",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
